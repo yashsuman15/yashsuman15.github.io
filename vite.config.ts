@@ -16,7 +16,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-
+  base: '/',
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
 })
