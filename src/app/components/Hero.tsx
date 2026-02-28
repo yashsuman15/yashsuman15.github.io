@@ -1,231 +1,281 @@
-import { useState, useEffect } from 'react';
-import { ChevronDown, Download, Eye } from 'lucide-react';
-import { MatrixRain } from './MatrixRain';
-import { GlitchText } from './GlitchText';
+import { useEffect, useRef, useCallback } from 'react';
 
-const roles = [
-  'AI ENGINEER',
-  'ML ARCHITECT',
-  'NEURAL NET DESIGNER',
-  'LLM SPECIALIST',
-  'DEEP LEARNING OPS',
-  'CYBERNETIC DREAMER',
-];
+const NAME = 'YASH SUMAN';
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>[]{}|\\_-=+';
 
-const stats = [
-  { value: '47+', label: 'AI MODELS' },
-  { value: '12+', label: 'YEARS XP' },
-  { value: '3.2B', label: 'PARAMS TUNED' },
-  { value: '99.1%', label: 'ACCURACY' },
-];
+function randomChar() {
+  return CHARS[Math.floor(Math.random() * CHARS.length)];
+}
 
 export function Hero() {
-  const [roleIndex, setRoleIndex] = useState(0);
-  const [displayed, setDisplayed] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [charIndex, setCharIndex] = useState(0);
-  const [scanLine, setScanLine] = useState(0);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const stateRef = useRef({
+    nameIdleTime: 0,
+    lastGlitchBurst: 0,
+    burstActive: false,
+    burstDuration: 0,
+    burstElapsed: 0,
+  });
 
-  // Typewriter effect
-  useEffect(() => {
-    const current = roles[roleIndex];
-    let timeout: ReturnType<typeof setTimeout>;
+  const setupCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
 
-    if (!isDeleting && charIndex <= current.length) {
-      setDisplayed(current.slice(0, charIndex));
-      timeout = setTimeout(() => setCharIndex((c) => c + 1), 80);
-    } else if (!isDeleting && charIndex > current.length) {
-      timeout = setTimeout(() => setIsDeleting(true), 2000);
-    } else if (isDeleting && charIndex > 0) {
-      setDisplayed(current.slice(0, charIndex));
-      timeout = setTimeout(() => setCharIndex((c) => c - 1), 40);
-    } else if (isDeleting && charIndex <= 0) {
-      setIsDeleting(false);
-      setRoleIndex((r) => (r + 1) % roles.length);
+    const fontSize = Math.min(window.innerWidth * 0.115, 100);
+    const tmp = document.createElement('canvas');
+    const t = tmp.getContext('2d')!;
+    t.font = `900 ${fontSize}px 'Orbitron', monospace`;
+    const totalW = Math.ceil(t.measureText(NAME).width) + 20;
+    const H = Math.ceil(fontSize * 1.2);
+
+    canvas.width = totalW;
+    canvas.height = H;
+    canvas.style.width = totalW + 'px';
+    canvas.style.height = H + 'px';
+
+    const charPositions: number[] = [];
+    let x = 4;
+    for (let i = 0; i < NAME.length; i++) {
+      charPositions.push(x);
+      x += t.measureText(NAME[i]).width;
     }
 
-    return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, roleIndex]);
-
-  // Scan line effect
-  useEffect(() => {
-    const id = setInterval(() => {
-      setScanLine((s) => (s + 1) % 100);
-    }, 20);
-    return () => clearInterval(id);
+    return { ctx, fontSize, W: totalW, H, charPositions };
   }, []);
 
-  const scrollToAbout = () => {
-    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const renderFrame = useCallback(
+    (
+      glitchLevel: number,
+      rgbSplit: number,
+      sliceLines: { y: number; h: number; shift: number }[]
+    ) => {
+      const setup = setupCanvas();
+      if (!setup) return;
+      const { ctx, fontSize, W, H, charPositions } = setup;
+      const cy = H / 2;
+      ctx.clearRect(0, 0, W, H);
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';
+      ctx.font = `900 ${fontSize}px 'Orbitron', monospace`;
+
+      // RED channel
+      if (rgbSplit > 0.3) {
+        ctx.globalAlpha = 0.75;
+        ctx.fillStyle = '#FF003C';
+        for (let i = 0; i < NAME.length; i++) {
+          const ch =
+            glitchLevel > 0.65 && Math.random() > 0.8
+              ? randomChar()
+              : NAME[i];
+          ctx.fillText(ch, charPositions[i] - rgbSplit, cy);
+        }
+        ctx.fillStyle = '#00F5FF';
+        for (let i = 0; i < NAME.length; i++) {
+          const ch =
+            glitchLevel > 0.65 && Math.random() > 0.8
+              ? randomChar()
+              : NAME[i];
+          ctx.fillText(ch, charPositions[i] + rgbSplit, cy);
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // Glow
+      ctx.shadowColor = '#FCE300';
+      ctx.shadowBlur = 28;
+      ctx.fillStyle = 'rgba(252,227,0,0.28)';
+      for (let i = 0; i < NAME.length; i++)
+        ctx.fillText(NAME[i], charPositions[i], cy);
+      ctx.shadowBlur = 0;
+
+      // Sharp layer
+      for (let i = 0; i < NAME.length; i++) {
+        const scramble = glitchLevel > 0.68 && Math.random() > 0.78;
+        ctx.fillStyle = scramble
+          ? Math.random() > 0.5
+            ? '#FF003C'
+            : '#FFFFFF'
+          : '#FCE300';
+        ctx.fillText(scramble ? randomChar() : NAME[i], charPositions[i], cy);
+      }
+
+      // Slice distortion
+      sliceLines.forEach(({ y, h, shift }) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, y, W, h);
+        ctx.clip();
+        ctx.drawImage(canvasRef.current!, shift, 0);
+        ctx.restore();
+      });
+
+      // Noise blocks
+      if (glitchLevel > 0.25) {
+        for (let i = 0; i < Math.floor(glitchLevel * 10); i++) {
+          ctx.fillStyle = `rgba(${
+            Math.random() > 0.5 ? '255,0,60' : '0,245,255'
+          },${Math.random() * 0.55})`;
+          ctx.fillRect(
+            Math.random() * W,
+            Math.random() * H,
+            Math.random() * 28 + 4,
+            Math.random() * 5 + 1
+          );
+        }
+      }
+    },
+    [setupCanvas]
+  );
+
+  useEffect(() => {
+    const state = stateRef.current;
+    let animId: number;
+
+    const loop = () => {
+      state.nameIdleTime += 16.67;
+
+      if (
+        !state.burstActive &&
+        state.nameIdleTime - state.lastGlitchBurst >
+          2200 + Math.random() * 4000
+      ) {
+        state.burstActive = true;
+        state.burstDuration = 200 + Math.random() * 450;
+        state.burstElapsed = 0;
+        state.lastGlitchBurst = state.nameIdleTime;
+      }
+
+      let glitchLevel = 0;
+      let rgbSplit = 0;
+      const sliceLines: { y: number; h: number; shift: number }[] = [];
+
+      if (state.burstActive) {
+        state.burstElapsed += 16.67;
+        const bp = state.burstElapsed / state.burstDuration;
+        const intensity =
+          bp < 0.2 ? bp / 0.2 : bp < 0.5 ? 1 : 1 - (bp - 0.5) / 0.5;
+        glitchLevel = intensity;
+        rgbSplit = intensity * (5 + Math.random() * 10);
+
+        if (intensity > 0.28 && Math.random() > 0.35) {
+          const s = setupCanvas();
+          if (s) {
+            const count = Math.floor(2 + Math.random() * 4);
+            for (let i = 0; i < count; i++) {
+              sliceLines.push({
+                y: Math.random() * s.H,
+                h: Math.random() * 7 + 1,
+                shift: (Math.random() - 0.5) * 22,
+              });
+            }
+          }
+        }
+
+        if (bp >= 1) {
+          state.burstActive = false;
+          state.burstElapsed = 0;
+        }
+      } else {
+        if (Math.random() > 0.975) {
+          glitchLevel = 0.04 + Math.random() * 0.12;
+          rgbSplit = Math.random() * 1.8;
+        }
+      }
+
+      renderFrame(glitchLevel, rgbSplit, sliceLines);
+      animId = requestAnimationFrame(loop);
+    };
+
+    // Initial render
+    renderFrame(0, 0, []);
+    animId = requestAnimationFrame(loop);
+
+    const handleResize = () => renderFrame(0, 0, []);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [renderFrame, setupCanvas]);
 
   return (
-    <section
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden cyber-grid-bg"
-      style={{ background: 'var(--cyber-bg)' }}
-    >
-      {/* Matrix Rain background */}
-      <MatrixRain />
-
-      {/* Perspective grid floor */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(0,245,255,0.15) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,245,255,0.15) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-          transform: 'perspective(400px) rotateX(60deg)',
-          transformOrigin: 'bottom',
-          maskImage: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
-          WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
-        }}
-      />
-
-      {/* Horizontal scan line */}
-      <div
-        className="absolute left-0 right-0 pointer-events-none"
-        style={{
-          top: `${scanLine}%`,
-          height: '2px',
-          background: 'linear-gradient(90deg, transparent, rgba(0,245,255,0.4), transparent)',
-          transition: 'top 0.02s linear',
-          zIndex: 2,
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-20">
-        {/* System label */}
-        <div
-          className="flex items-center gap-3 mb-8"
-          style={{ fontFamily: 'Share Tech Mono, monospace', color: 'var(--cyber-cyan)', fontSize: '0.75rem' }}
-        >
-          <span className="w-2 h-2 rounded-full bg-green-400 pulse-ring" />
-          <span>SYSTEM ONLINE</span>
-          <span style={{ color: 'var(--cyber-muted)' }}>// PORTFOLIO v2.0.77</span>
+    <section id="hero">
+      <div className="hero-bg-glow" />
+      <div className="hero-bg-glow2" />
+      <div className="hero-content">
+        <div className="hero-tag">
+          AI AGENTS // RAG AGENTS // VISION SYSTEMS
         </div>
-
-        {/* Main name */}
-        <div className="mb-4">
-          <GlitchText
-            text="KAI NAKAMURA"
-            as="h1"
-            intensity="low"
-            className="neon-cyan font-orbitron"
-            style={{
-              fontFamily: 'Orbitron, sans-serif',
-              fontSize: 'clamp(2.5rem, 8vw, 6rem)',
-              letterSpacing: '0.08em',
-              lineHeight: 1.1,
-              display: 'block',
-            }}
-          />
+        <div id="name-canvas-wrap">
+          <canvas id="name-canvas" ref={canvasRef} />
         </div>
-
-        {/* Subtitle / role */}
-        <div className="flex items-center gap-3 mb-8">
-          <span
-            style={{
-              fontFamily: 'Share Tech Mono, monospace',
-              color: 'var(--cyber-muted)',
-              fontSize: '1rem',
-            }}
-          >
-            &gt;_
-          </span>
-          <span
-            className="typing-cursor"
-            style={{
-              fontFamily: 'Share Tech Mono, monospace',
-              color: 'var(--cyber-magenta)',
-              fontSize: 'clamp(0.9rem, 3vw, 1.3rem)',
-              textShadow: '0 0 10px var(--cyber-magenta)',
-              letterSpacing: '0.15em',
-            }}
-          >
-            {displayed}
-          </span>
-        </div>
-
-        {/* Description */}
-        <p
-          className="max-w-2xl mb-10"
-          style={{
-            fontFamily: 'Rajdhani, sans-serif',
-            color: 'var(--cyber-text)',
-            fontSize: '1.05rem',
-            lineHeight: 1.8,
-            opacity: 0.85,
-          }}
-        >
-          Building next-generation AI systems at the bleeding edge of neural architecture,
-          large language models, and autonomous agents. Turning raw data into{' '}
-          <span style={{ color: 'var(--cyber-cyan)' }}>intelligent machines</span> that
-          push beyond human limits.
+        <div className="hero-title">AI ENGINEER</div>
+        <p className="hero-desc">
+          Neural net architect &amp; machine learning specialist operating in the
+          gray zones of Night City's data streams. I engineer intelligence that
+          adapts, learns, and survives in hostile digital environments.
         </p>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-wrap gap-4 mb-16">
-          <button
-            className="cyber-btn clip-cyber px-8 py-3 flex items-center gap-2 text-sm"
-            onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            <Eye size={16} />
-            VIEW PROJECTS
-          </button>
-          <button
-            className="cyber-btn cyber-btn-magenta clip-cyber px-8 py-3 flex items-center gap-2 text-sm"
-          >
-            <Download size={16} />
-            DOWNLOAD CV
-          </button>
+        <div className="hero-stats">
+          <div className="stat">
+            <span className="stat-num">7+</span>
+            <span className="stat-label">YEARS JACKED IN</span>
+          </div>
+          <div className="stat-divider" />
+          <div className="stat">
+            <span className="stat-num">42</span>
+            <span className="stat-label">MODELS DEPLOYED</span>
+          </div>
+          <div className="stat-divider" />
+          <div className="stat">
+            <span className="stat-num">99%</span>
+            <span className="stat-label">NEURAL UPTIME</span>
+          </div>
         </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="cyber-card clip-cyber-sm p-4 text-center"
-            >
-              <div
-                className="neon-cyan font-orbitron mb-1"
-                style={{
-                  fontFamily: 'Orbitron, sans-serif',
-                  fontSize: '1.6rem',
-                  lineHeight: 1,
-                }}
-              >
-                {stat.value}
-              </div>
-              <div
-                style={{
-                  fontFamily: 'Share Tech Mono, monospace',
-                  fontSize: '0.65rem',
-                  color: 'var(--cyber-muted)',
-                  letterSpacing: '0.15em',
-                }}
-              >
-                {stat.label}
-              </div>
-            </div>
-          ))}
+        <div className="hero-btns">
+          <a href="#projects" className="btn-primary">
+            VIEW PROJECTS
+          </a>
+          <a href="#contact" className="btn-secondary">
+            SEND PING
+          </a>
         </div>
       </div>
 
-      {/* Scroll cue */}
-      <button
-        onClick={scrollToAbout}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 back-to-top"
-        style={{ color: 'var(--cyber-cyan)', border: 'none', background: 'none', cursor: 'pointer' }}
-      >
-        <span style={{ fontFamily: 'Share Tech Mono, monospace', fontSize: '0.65rem', letterSpacing: '0.2em' }}>
-          SCROLL
-        </span>
-        <ChevronDown size={20} />
-      </button>
+      <div className="hero-right">
+        <span>LAT: 37.7749&deg; N</span>
+        <span>LNG: 122.4194&deg; W</span>
+        <span>{'\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500'}</span>
+        <span>SYS: ONLINE</span>
+        <span>MEM: 256TB</span>
+        <span>CPU: 99.8%</span>
+        <span>{'\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500'}</span>
+        <span>// 2077.02.28</span>
+      </div>
+
+      <div className="hero-terminal">
+        <div className="terminal-header">// NEURAL_OS v4.2.1 — TERMINAL</div>
+        <div className="terminal-line">
+          &gt; <span>load_profile</span> "Yash_Suman"
+        </div>
+        <div className="terminal-line active">
+          &gt; Identity confirmed {'\u2713'}
+        </div>
+        <div className="terminal-line">
+          &gt; <span>status:</span> ACTIVE — No bounty
+        </div>
+        <div className="terminal-line">
+          &gt; <span>specialization:</span> AI/ML Engineering
+        </div>
+        <div className="terminal-line">
+          &gt; <span>threat_level:</span> Minimal (to clients)
+        </div>
+        <div className="terminal-line">
+          &gt; _<span className="blink-cursor" />
+        </div>
+      </div>
     </section>
   );
 }
