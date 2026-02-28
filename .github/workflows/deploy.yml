@@ -19,6 +19,9 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run build
+        env:
+          VITE_FORMSPREE_ID: ${{ secrets.VITE_FORMSPREE_ID }}
+          VITE_CHAT_API_URL: ${{ secrets.VITE_CHAT_API_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
