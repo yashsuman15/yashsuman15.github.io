@@ -428,6 +428,28 @@ nav {
 .nav-links a:hover { color: var(--yellow); }
 .nav-links a:hover::after { transform: scaleX(1); }
 
+/* Hamburger toggle — hidden on desktop */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 600;
+}
+.nav-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--yellow);
+  transition: transform .3s, opacity .3s;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
 .nav-status {
   font-family: 'Share Tech Mono', monospace;
   font-size: 11px;
@@ -1569,17 +1591,64 @@ footer {
 }
 
 @media (max-width: 768px) {
+  /* Nav — hamburger menu */
   nav { padding: 16px 24px; }
-  .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5,5,8,0.96);
+    backdrop-filter: blur(16px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    z-index: 550;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { font-size: 16px; letter-spacing: 5px; }
+
+  /* Hero */
   #hero { padding: 100px 24px 60px; }
+  .hero-title { letter-spacing: 3px; }
+  .hero-tag { font-size: 11px; letter-spacing: 3px; }
+  .hero-desc { font-size: 16px; padding-left: 16px; }
   .hero-stats { gap: 24px; }
+  .stat-num { font-size: 28px; }
   .hero-terminal { display: none; }
   .hero-right { display: none; }
+
+  /* About — stack vertically, photo on top */
   #about { padding: 80px 20px; }
-  .about-grid { gap: 20px; }
-  .about-photo { width: clamp(100px, 30vw, 160px); }
-  .photo-label { font-size: 9px; letter-spacing: 1px; bottom: -28px; }
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .about-photo {
+    order: -1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .about-photo .photo-frame {
+    width: clamp(180px, 50vw, 240px);
+  }
+  .photo-label {
+    position: static;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+  .about-implants {
+    width: 100%;
+    margin-top: 20px;
+  }
   .cyber-badge { display: none; }
+
+  /* Other sections */
   #skills, #projects, #experience, #contact { padding: 80px 24px; }
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
   .skills-grid { grid-template-columns: 1fr; }
@@ -1602,8 +1671,29 @@ footer {
 }
 
 @media (max-width: 420px) {
-  .about-grid { gap: 14px; }
-  .about-photo { width: clamp(88px, 28vw, 130px); }
-  .about-text p { font-size: 14px; }
+  /* Hero — tighter spacing */
+  #hero { padding: 90px 16px 48px; }
+  .hero-title { letter-spacing: 2px; font-size: clamp(14px, 4vw, 18px); }
+  .hero-tag { font-size: 10px; letter-spacing: 2px; }
+  .hero-desc { font-size: 14px; margin-bottom: 32px; }
+  .hero-stats { flex-direction: column; gap: 16px; margin-bottom: 36px; }
+  .stat-divider { width: 40px; height: 1px; }
+  .stat-num { font-size: 24px; }
+  .hero-btns { flex-direction: column; gap: 12px; }
+  .hero-btns a { text-align: center; }
+
+  /* About — smaller photo, tighter text */
+  #about { padding: 60px 16px; }
+  .about-grid { gap: 24px; }
+  .about-photo .photo-frame { width: clamp(150px, 55vw, 200px); }
+  .about-text p { font-size: 14px; line-height: 1.7; }
+  .implant-title { font-size: 10px; letter-spacing: 2px; }
+  .implant-item { gap: 8px; font-size: 11px; }
   .implant-bar { width: 60px; }
+
+  /* Other sections */
+  #skills, #projects, #experience, #contact { padding: 60px 16px; }
+  .section-title { font-size: clamp(24px, 7vw, 36px); }
+  .contact-info h3 { font-size: clamp(20px, 6vw, 28px); }
+  .form-btn { padding: 14px 28px; font-size: 12px; letter-spacing: 2px; }
 }

@@ -1,16 +1,29 @@
+import { useState } from 'react';
+
 export function Navigation() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <nav>
       <a href="#hero" className="nav-logo">
         <img src="/logo.png" alt="Logo" style={{ height: '32px' }} />
       </a>
-      <div className="nav-links">
-        <a href="#about">// ABOUT</a>
-        <a href="#skills">// SKILLS</a>
-        <a href="#showcase">// PROJECTS</a>
-        <a href="#experience">// EXP</a>
-        <a href="#contact">// CONTACT</a>
+      <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
+        <a href="#about" onClick={() => setMenuOpen(false)}>// ABOUT</a>
+        <a href="#skills" onClick={() => setMenuOpen(false)}>// SKILLS</a>
+        <a href="#showcase" onClick={() => setMenuOpen(false)}>// PROJECTS</a>
+        <a href="#experience" onClick={() => setMenuOpen(false)}>// EXP</a>
+        <a href="#contact" onClick={() => setMenuOpen(false)}>// CONTACT</a>
       </div>
+      <button
+        className={`nav-toggle ${menuOpen ? 'open' : ''}`}
+        onClick={() => setMenuOpen((v) => !v)}
+        aria-label="Toggle navigation"
+      >
+        <span />
+        <span />
+        <span />
+      </button>
       <div className="nav-status">
         <div className="status-dot" />
         WORKING
