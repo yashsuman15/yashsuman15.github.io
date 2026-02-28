@@ -19,4 +19,8 @@ export default defineConfig({
   base: '/',
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
+  build: {
+    // Three.js hologram chunk is lazy-loaded; suppress the size warning
+    chunkSizeWarningLimit: 650,
+  },
 })

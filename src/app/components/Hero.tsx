@@ -8,7 +8,11 @@ function randomChar() {
   return CHARS[Math.floor(Math.random() * CHARS.length)];
 }
 
-export function Hero() {
+interface HeroProps {
+  onJackIn?: () => void;
+}
+
+export function Hero({ onJackIn }: HeroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Typewriter rotating titles
@@ -298,6 +302,9 @@ export function Hero() {
           <a href="#contact" className="btn-secondary">
             SEND PING
           </a>
+          <button className="btn-jackin" onClick={onJackIn}>
+            ASK MY AI AGENT
+          </button>
         </div>
       </div>
 

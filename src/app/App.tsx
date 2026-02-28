@@ -11,9 +11,11 @@ import { Experience } from './components/Experience';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { ScrollIndicator } from './components/ScrollIndicator';
+import { Chat } from './components/Chat';
 
 export default function App() {
   const [bootComplete, setBootComplete] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function App() {
 
       {/* Main content */}
       <main>
-        <Hero />
+        <Hero onJackIn={() => setIsChatOpen(true)} />
         <Marquee />
         <About />
         <Showcase />
@@ -42,6 +44,11 @@ export default function App() {
       </main>
 
       <Footer />
+
+      {/* Alt Cunningham Chat Overlay */}
+      {isChatOpen && (
+        <Chat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+      )}
     </>
   );
 }
