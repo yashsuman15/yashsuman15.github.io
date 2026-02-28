@@ -1880,9 +1880,9 @@ footer {
   font-family: 'Share Tech Mono', monospace;
   font-size: 10px;
   letter-spacing: 3px;
-  color: rgba(255,26,26,0.6);
+  color: rgba(255,160,160,0.75);
   background: none;
-  border: 1px solid rgba(255,26,26,0.3);
+  border: 1px solid rgba(255,120,120,0.35);
   padding: 6px 16px;
   cursor: pointer;
   transition: all 0.3s;
@@ -1940,9 +1940,14 @@ footer {
   margin-top: 24px;
   font-size: 9px;
   letter-spacing: 3px;
-  color: rgba(255,26,26,0.35);
+  color: rgba(255,140,140,0.4);
   text-align: center;
   line-height: 1.6;
+}
+
+/* Mobile compact avatar banner — hidden on desktop, shown when sidebar is gone */
+.chat-mobile-avatar {
+  display: none;
 }
 
 /* Chat Content Area */
@@ -1998,7 +2003,7 @@ footer {
 }
 
 .chat-msg-alt .chat-msg-label {
-  color: rgba(255,26,26,0.4);
+  color: rgba(255,120,120,0.5);
 }
 
 .chat-msg-user .chat-msg-label {
@@ -2015,7 +2020,7 @@ footer {
 }
 
 .chat-msg-alt .chat-msg-body {
-  color: #FF6B6B;
+  color: #E8C4C4;
   background: rgba(255,26,26,0.04);
   border: 1px solid rgba(255,26,26,0.1);
   border-left: 2px solid rgba(255,26,26,0.3);
@@ -2086,7 +2091,7 @@ footer {
 .chat-suggestions-label {
   font-size: 9px;
   letter-spacing: 3px;
-  color: rgba(255,26,26,0.3);
+  color: rgba(255,120,120,0.35);
   user-select: none;
 }
 
@@ -2100,7 +2105,7 @@ footer {
   font-family: 'Share Tech Mono', monospace;
   font-size: 11px;
   letter-spacing: 1px;
-  color: rgba(255,26,26,0.6);
+  color: rgba(255,160,160,0.7);
   background: rgba(255,26,26,0.04);
   border: 1px solid rgba(255,26,26,0.15);
   padding: 8px 14px;
@@ -2182,14 +2187,14 @@ footer {
   padding: 16px 20px;
   font-size: 11px;
   letter-spacing: 2px;
-  color: rgba(255,26,26,0.4);
+  color: rgba(255,160,160,0.5);
 }
 
 .chat-loading-dots span {
   display: inline-block;
   width: 4px;
   height: 4px;
-  background: rgba(255,26,26,0.5);
+  background: rgba(255,120,120,0.6);
   border-radius: 50%;
   margin: 0 2px;
   animation: altPulse 1.2s ease-in-out infinite;
@@ -2290,11 +2295,72 @@ footer {
   .chat-avatar-panel {
     display: none;
   }
+
+  /* Mobile compact avatar banner */
+  .chat-mobile-avatar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,26,26,0.1);
+    background: rgba(8,2,5,0.9);
+    flex-shrink: 0;
+    animation: chatFadeIn 0.5s ease-out;
+  }
+
+  .chat-mobile-avatar-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(255,26,26,0.3) 0%, rgba(255,26,26,0.05) 70%);
+    border: 1px solid rgba(255,26,26,0.25);
+    position: relative;
+    flex-shrink: 0;
+    animation: altPulse 4s ease-in-out infinite;
+  }
+
+  /* Glowing dot inside the icon — "eye" */
+  .chat-mobile-avatar-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #FF1A1A;
+    box-shadow: 0 0 6px #FF1A1A, 0 0 14px rgba(255,26,26,0.5);
+  }
+
+  .chat-mobile-avatar-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .chat-mobile-avatar-name {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #FF1A1A;
+    text-shadow: 0 0 8px rgba(255,26,26,0.4);
+  }
+
+  .chat-mobile-avatar-status {
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: rgba(255,26,26,0.3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .chat-header { padding: 10px 16px; }
   .chat-header-info { font-size: 9px; letter-spacing: 2px; }
   .chat-disconnect { font-size: 9px; padding: 5px 12px; }
   .chat-messages { padding: 20px 16px; }
-  .chat-suggestions { padding: 0 16px; }
+  .chat-suggestions-container { padding: 0 16px; }
   .chat-input-area { padding: 12px 16px; }
   .chat-msg-body { font-size: 13px; padding: 12px 14px; }
 }

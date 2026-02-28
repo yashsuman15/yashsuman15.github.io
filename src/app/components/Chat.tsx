@@ -434,6 +434,15 @@ export function Chat({ isOpen, onClose }: ChatProps) {
 
             {/* Chat content */}
             <div className="chat-content">
+              {/* Mobile-only compact avatar banner (visible when sidebar is hidden) */}
+              <div className="chat-mobile-avatar">
+                <div className="chat-mobile-avatar-icon" />
+                <div className="chat-mobile-avatar-info">
+                  <span className="chat-mobile-avatar-name">ALT_CUNNINGHAM</span>
+                  <span className="chat-mobile-avatar-status">CONSTRUCT // ACTIVE // BEYOND BLACKWALL</span>
+                </div>
+              </div>
+
               <div className="chat-messages">
                 {/* Intro typewriter (before introComplete) */}
                 {!introComplete && phase === 'intro' && typedIntro && (
