@@ -261,7 +261,7 @@ export function Hero() {
       <div className="hero-bg-glow2" />
       <div className="hero-content">
         <div className="hero-tag">
-          AI AGENTS // RAG AGENTS // VISION SYSTEMS
+          TRAINING MODELS. SHIPPING PRODUCTS. SOLVING HARD PROBLEMS.
         </div>
         <div id="name-canvas-wrap">
           <canvas id="name-canvas" ref={canvasRef} />
