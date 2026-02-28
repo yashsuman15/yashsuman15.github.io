@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import {
   ALT_INTRO_MESSAGE,
-  SUGGESTED_QUESTIONS,
+  ALT_QUESTIONS,
+  YASH_QUESTIONS,
   SECTION_MAP,
   CHAT_SYSTEM_PROMPT,
 } from '@/data/chatContext';
@@ -500,18 +501,37 @@ export function Chat({ isOpen, onClose }: ChatProps) {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Suggestions */}
+              {/* Suggestions — two groups */}
               {showSuggestions && phase === 'ready' && (
-                <div className="chat-suggestions">
-                  {SUGGESTED_QUESTIONS.map((q, i) => (
-                    <button
-                      key={i}
-                      className="chat-suggestion"
-                      onClick={() => handleSuggestionClick(q)}
-                    >
-                      {q}
-                    </button>
-                  ))}
+                <div className="chat-suggestions-container">
+                  <div className="chat-suggestions-group">
+                    <span className="chat-suggestions-label">// ABOUT ALT</span>
+                    <div className="chat-suggestions">
+                      {ALT_QUESTIONS.map((q, i) => (
+                        <button
+                          key={`alt-${i}`}
+                          className="chat-suggestion"
+                          onClick={() => handleSuggestionClick(q)}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="chat-suggestions-group">
+                    <span className="chat-suggestions-label">// ABOUT YASH</span>
+                    <div className="chat-suggestions">
+                      {YASH_QUESTIONS.map((q, i) => (
+                        <button
+                          key={`yash-${i}`}
+                          className="chat-suggestion"
+                          onClick={() => handleSuggestionClick(q)}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
 
