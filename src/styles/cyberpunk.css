@@ -25,7 +25,6 @@ body {
   font-family: 'Rajdhani', sans-serif;
   font-size: 16px;
   overflow-x: hidden;
-  cursor: none;
 }
 
 /* ── SCANLINES OVERLAY ── */
@@ -383,29 +382,6 @@ section { position: relative; z-index: 1; }
 }
 .boot-skip:hover { color: rgba(252,227,0,0.5); }
 
-/* ── CUSTOM CURSOR ── */
-.cursor {
-  position: fixed;
-  width: 20px; height: 20px;
-  border: 2px solid var(--yellow);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width .2s, height .2s, background .2s;
-  mix-blend-mode: difference;
-}
-.cursor-dot {
-  position: fixed;
-  width: 4px; height: 4px;
-  background: var(--yellow);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-}
-.cursor.active { width: 40px; height: 40px; background: rgba(252,227,0,0.1); }
-
 /* ── NAV ── */
 nav {
   position: fixed;
@@ -532,6 +508,17 @@ nav {
   letter-spacing: 8px;
   margin-bottom: 32px;
   text-shadow: 0 0 20px rgba(0,245,255,0.5);
+  min-height: 1.4em;
+}
+.hero-title-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--cyan);
+  margin-left: 4px;
+  vertical-align: middle;
+  box-shadow: 0 0 8px rgba(0,245,255,0.6);
+  animation: blink .7s step-end infinite;
 }
 
 .hero-desc {
@@ -735,7 +722,7 @@ nav {
 .about-text p strong { color: var(--yellow); font-weight: 600; }
 
 .about-implants {
-  margin-top: 32px;
+  margin-top: 24px;
   padding: 24px;
   background: var(--dark3);
   border: 1px solid rgba(252,227,0,0.15);

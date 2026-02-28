@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { BootIntro } from './components/BootIntro';
-import { CustomCursor } from './components/CustomCursor';
 import { Navigation } from './components/Navigation';
 import { Hero } from './components/Hero';
 import { Marquee } from './components/Marquee';
@@ -20,9 +19,6 @@ export default function App() {
     <>
       {/* Boot intro overlay */}
       {!bootComplete && <BootIntro onComplete={() => setBootComplete(true)} />}
-
-      {/* Custom cursor */}
-      <CustomCursor />
 
       {/* Noise overlay */}
       <div className="noise" />

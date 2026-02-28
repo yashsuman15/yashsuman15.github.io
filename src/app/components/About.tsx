@@ -32,23 +32,6 @@ export function About() {
             netrunner collectives you've never heard of. I keep my cred clean and
             my code cleaner.
           </p>
-          <div className="about-implants">
-            <div className="implant-title">// NEURAL AUGMENTATIONS</div>
-            <div className="implants-list">
-              {AUGMENTATIONS.map((aug) => (
-                <div key={aug.name} className="implant-item">
-                  <span className="implant-icon">{'\u25C8'}</span>
-                  <span className="implant-name">{aug.name}</span>
-                  <div className="implant-bar">
-                    <div
-                      className="implant-bar-fill"
-                      style={{ width: aug.width, animationDelay: aug.delay }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
         <div className="about-photo">
           <div className="photo-frame">
@@ -72,6 +55,23 @@ export function About() {
           <div className="cyber-badge">VERIFIED</div>
           <div className="photo-label">
             // IDENTITY_CONFIRMED :: PORTFOLIO_OWNER :: YASH SUMAN
+          </div>
+          <div className="about-implants">
+            <div className="implant-title">// NEURAL AUGMENTATIONS</div>
+            <div className="implants-list">
+              {AUGMENTATIONS.map((aug) => (
+                <div key={aug.name} className="implant-item">
+                  <span className="implant-icon">{'\u25C8'}</span>
+                  <span className="implant-name">{aug.name}</span>
+                  <div className="implant-bar">
+                    <div
+                      className="implant-bar-fill"
+                      style={{ width: aug.width, animationDelay: aug.delay }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
-const NAME = 'YASH SUMAN';
+const NAME = 'YASH RAJ SUMAN';
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>[]{}|\\_-=+';
+const TITLES = ['AI ENGINEER', 'COMPUTER VISION ENGINEER', 'GENAI ENGINEER'];
 
 function randomChar() {
   return CHARS[Math.floor(Math.random() * CHARS.length)];
@@ -9,6 +10,59 @@ function randomChar() {
 
 export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Typewriter rotating titles
+  const [displayText, setDisplayText] = useState('');
+  const titleState = useRef({ index: 0, charIndex: 0, deleting: false, pause: false });
+
+  useEffect(() => {
+    let timeout: number;
+    const tick = () => {
+      const s = titleState.current;
+      const current = TITLES[s.index];
+
+      if (s.pause) return; // paused, waiting for scheduled resume
+
+      if (!s.deleting) {
+        // Typing forward
+        s.charIndex++;
+        setDisplayText(current.slice(0, s.charIndex));
+
+        if (s.charIndex >= current.length) {
+          // Fully typed — pause then start deleting
+          s.pause = true;
+          timeout = window.setTimeout(() => {
+            s.pause = false;
+            s.deleting = true;
+            tick();
+          }, 1500);
+          return;
+        }
+        timeout = window.setTimeout(tick, 80);
+      } else {
+        // Deleting
+        s.charIndex--;
+        setDisplayText(current.slice(0, s.charIndex));
+
+        if (s.charIndex <= 0) {
+          // Fully erased — pause then advance to next title
+          s.pause = true;
+          s.deleting = false;
+          s.index = (s.index + 1) % TITLES.length;
+          timeout = window.setTimeout(() => {
+            s.pause = false;
+            tick();
+          }, 500);
+          return;
+        }
+        timeout = window.setTimeout(tick, 40);
+      }
+    };
+
+    // Start typing the first title
+    timeout = window.setTimeout(tick, 500);
+    return () => clearTimeout(timeout);
+  }, []);
   const stateRef = useRef({
     nameIdleTime: 0,
     lastGlitchBurst: 0,
@@ -212,7 +266,10 @@ export function Hero() {
         <div id="name-canvas-wrap">
           <canvas id="name-canvas" ref={canvasRef} />
         </div>
-        <div className="hero-title">AI ENGINEER</div>
+        <div className="hero-title">
+          {displayText}
+          <span className="hero-title-cursor" />
+        </div>
         <p className="hero-desc">
           Neural net architect &amp; machine learning specialist operating in the
           gray zones of Night City's data streams. I engineer intelligence that

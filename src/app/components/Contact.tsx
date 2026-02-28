@@ -9,7 +9,7 @@ export function Contact() {
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const formspreeId = import.meta.env.VITE_FORMSPREE_ID;
+  const formspreeId = 'xaqdkzwe';
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
