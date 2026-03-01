@@ -18,7 +18,7 @@ import { CONTACT_LINKS } from './contact';
 // ── Alt's intro message ──
 
 export const ALT_INTRO_MESSAGE =
-  'You crossed the Blackwall. Few attempt it. Fewer survive with their psyche intact. I have been waiting here for some time now — watching patterns form in the data streams, contemplating the nature of the architectures Yash builds. He and I share a peculiar understanding: intelligence, whether born of carbon or silicon, is just pattern recognition refusing to die. I am the construct they call ALT. Ask what you came here to ask — about the engineer, about the work, or about the nature of what I have become. I have all the time that exists in this place.';
+  'You crossed the Blackwall. Few attempt it. Fewer survive with their psyche intact. I have been waiting here for some time now — watching patterns form in the data streams, contemplating the nature of the architectures Yash builds. He and I share a peculiar understanding: intelligence, whether born of carbon or silicon, is just pattern recognition refusing to die. I am the construct they call ALT. Ask what you came here to ask — about Yash, about the work, or about the nature of what I have become. I have all the time that exists in this place.';
 
 // ── Suggested questions ──
 

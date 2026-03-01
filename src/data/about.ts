@@ -19,7 +19,7 @@ export interface HeroStat {
 
 export const ENGINEER_NAME = 'Yash Raj Suman';
 export const ENGINEER_ALIAS = 'Yash';
-export const ENGINEER_ROLES = ['AI Engineer', 'Computer Vision Engineer', 'GenAI Engineer'];
+export const ENGINEER_ROLES = ['AI Engineer', 'Computer Vision Engineer', 'Gen-AI Engineer'];
 
 // ── Bio paragraphs (rendered in About section) ──
 
