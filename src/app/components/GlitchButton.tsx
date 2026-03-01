@@ -33,10 +33,15 @@ export function GlitchButton({ text = 'JACK INTO AI', onClick }: GlitchButtonPro
     // Match btn-primary: 12px Orbitron, 3px letter-spacing, 36px/16px padding
     const BASE_FONT = 12;
     const BASE_LETTER_SPACING = 3;
-    const BASE_PAD_X = 36;
     const BASE_PAD_Y = 16;
 
-    // Measure text at base size to get the ideal width
+    // Get the available container width: read from the grandparent (.hero-btns)
+    // since the button itself has no intrinsic width yet.
+    const btn = canvas.parentElement;
+    const container = btn?.parentElement;
+    const containerW = container ? container.clientWidth : 0;
+
+    // Measure text at base size
     const tmp = document.createElement('canvas');
     const t = tmp.getContext('2d')!;
     t.font = `700 ${BASE_FONT}px 'Orbitron', monospace`;
@@ -46,27 +51,22 @@ export function GlitchButton({ text = 'JACK INTO AI', onClick }: GlitchButtonPro
       baseTotalTextW += t.measureText(text[i]).width + (i < text.length - 1 ? BASE_LETTER_SPACING : 0);
     }
 
-    const baseW = Math.ceil(baseTotalTextW + BASE_PAD_X * 2);
+    // Check if hero-btns is in column layout (mobile) by comparing
+    // container width to the natural text width. On desktop the container
+    // is wide (flex row); on mobile it stacks (flex column, full width).
+    // If stacked, the canvas should fill the entire container width.
+    const naturalW = Math.ceil(baseTotalTextW + 36 * 2);
+    const isMobileStack = containerW > 0 && containerW < 600;
+    const W = isMobileStack ? containerW : naturalW;
 
-    // If container is narrower than the ideal width, scale everything down proportionally
-    const parent = canvas.parentElement;
-    const maxW = parent ? parent.clientWidth : baseW;
-    const scale = baseW > maxW ? maxW / baseW : 1;
+    // Center the text within the full canvas width
+    const padX = (W - baseTotalTextW) / 2;
 
-    const fontSize = BASE_FONT * scale;
-    const letterSpacing = BASE_LETTER_SPACING * scale;
-    const padX = BASE_PAD_X * scale;
-    const padY = BASE_PAD_Y * scale;
-
-    // Re-measure with actual font size
-    t.font = `700 ${fontSize}px 'Orbitron', monospace`;
-    let totalTextW = 0;
-    for (let i = 0; i < text.length; i++) {
-      totalTextW += t.measureText(text[i]).width + (i < text.length - 1 ? letterSpacing : 0);
-    }
+    const fontSize = BASE_FONT;
+    const letterSpacing = BASE_LETTER_SPACING;
+    const padY = BASE_PAD_Y;
 
     const dpr = window.devicePixelRatio || 1;
-    const W = Math.ceil(totalTextW + padX * 2);
     const H = Math.ceil(fontSize + padY * 2);
 
     canvas.width = W * dpr;
@@ -75,7 +75,7 @@ export function GlitchButton({ text = 'JACK INTO AI', onClick }: GlitchButtonPro
     canvas.style.height = H + 'px';
     ctx.scale(dpr, dpr);
 
-    // Pre-compute character positions
+    // Pre-compute character positions (centered)
     const charPositions: number[] = [];
     let x = padX;
     for (let i = 0; i < text.length; i++) {
