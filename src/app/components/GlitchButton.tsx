@@ -30,24 +30,41 @@ export function GlitchButton({ text = 'JACK INTO AI', onClick }: GlitchButtonPro
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
 
-    // Scale font based on container width, clamped for readability
-    const parent = canvas.parentElement;
-    const containerW = parent ? parent.clientWidth : 200;
-    const fontSize = Math.max(11, Math.min(containerW * 0.075, 14));
-    const letterSpacing = 3;
+    // Match btn-primary: 12px Orbitron, 3px letter-spacing, 36px/16px padding
+    const BASE_FONT = 12;
+    const BASE_LETTER_SPACING = 3;
+    const BASE_PAD_X = 36;
+    const BASE_PAD_Y = 16;
 
+    // Measure text at base size to get the ideal width
     const tmp = document.createElement('canvas');
     const t = tmp.getContext('2d')!;
-    t.font = `700 ${fontSize}px 'Orbitron', monospace`;
+    t.font = `700 ${BASE_FONT}px 'Orbitron', monospace`;
 
-    // Measure total width with letter spacing
+    let baseTotalTextW = 0;
+    for (let i = 0; i < text.length; i++) {
+      baseTotalTextW += t.measureText(text[i]).width + (i < text.length - 1 ? BASE_LETTER_SPACING : 0);
+    }
+
+    const baseW = Math.ceil(baseTotalTextW + BASE_PAD_X * 2);
+
+    // If container is narrower than the ideal width, scale everything down proportionally
+    const parent = canvas.parentElement;
+    const maxW = parent ? parent.clientWidth : baseW;
+    const scale = baseW > maxW ? maxW / baseW : 1;
+
+    const fontSize = BASE_FONT * scale;
+    const letterSpacing = BASE_LETTER_SPACING * scale;
+    const padX = BASE_PAD_X * scale;
+    const padY = BASE_PAD_Y * scale;
+
+    // Re-measure with actual font size
+    t.font = `700 ${fontSize}px 'Orbitron', monospace`;
     let totalTextW = 0;
     for (let i = 0; i < text.length; i++) {
       totalTextW += t.measureText(text[i]).width + (i < text.length - 1 ? letterSpacing : 0);
     }
 
-    const padX = 36;
-    const padY = 16;
     const dpr = window.devicePixelRatio || 1;
     const W = Math.ceil(totalTextW + padX * 2);
     const H = Math.ceil(fontSize + padY * 2);

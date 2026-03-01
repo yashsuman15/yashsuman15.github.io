@@ -2266,10 +2266,12 @@ footer {
   box-shadow: 0 0 15px rgba(255, 26, 26, 0.25), 0 0 40px rgba(255, 0, 0, 0.08);
   transition: box-shadow 0.3s;
   line-height: 0;
+  max-width: 100%;
 }
 
 .btn-jackin canvas {
   display: block;
+  max-width: 100%;
 }
 
 .btn-jackin:hover {
@@ -3723,10 +3725,15 @@ footer {
   .hero-btns {
     flex-direction: column;
     gap: 12px;
+    width: 100%;
   }
 
   .hero-btns a {
     text-align: center;
+  }
+
+  .hero-btns .btn-jackin {
+    width: 100%;
   }
 
   /* About — smaller photo, tighter text */
