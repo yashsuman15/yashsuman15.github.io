@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { CONTACT_LINKS } from '@/data/contact';
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -79,26 +80,13 @@ export function Contact() {
             occasional rogue AI collective.
           </p>
           <div className="contact-links">
-            <a href="mailto:yashsuman15@gmail.com" className="contact-link">
-              <span className="contact-link-icon">{'\u2709'}</span>
-              <span className="contact-link-text">yashsuman15@gmail.com</span>
-              <span className="contact-link-label">EMAIL</span>
-            </a>
-            <a href="https://github.com/yashsuman15" className="contact-link">
-              <span className="contact-link-icon">{'\u25C8'}</span>
-              <span className="contact-link-text">github.com/yashsuman15</span>
-              <span className="contact-link-label">GITHUB</span>
-            </a>
-            <a href="https://www.linkedin.com/in/yash-raj-suman/" className="contact-link">
-              <span className="contact-link-icon">{'\u25C9'}</span>
-              <span className="contact-link-text">linkedin.com/in/yash-raj-suman</span>
-              <span className="contact-link-label">LINKEDIN</span>
-            </a>
-            <a href="https://x.com/yashsuman69" className="contact-link">
-              <span className="contact-link-icon">{'\u25C6'}</span>
-              <span className="contact-link-text">@yashsuman69</span>
-              <span className="contact-link-label">TWITTER/X</span>
-            </a>
+            {CONTACT_LINKS.map((link) => (
+              <a key={link.label} href={link.href} className="contact-link">
+                <span className="contact-link-icon">{link.icon}</span>
+                <span className="contact-link-text">{link.displayText}</span>
+                <span className="contact-link-label">{link.label}</span>
+              </a>
+            ))}
           </div>
         </div>
         <form className="contact-form" onSubmit={handleSubmit}>

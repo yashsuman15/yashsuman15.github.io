@@ -4,7 +4,7 @@ import {
   ALT_QUESTIONS,
   YASH_QUESTIONS,
   SECTION_MAP,
-  CHAT_SYSTEM_PROMPT,
+  PORTFOLIO_CONTEXT,
 } from '@/data/chatContext';
 
 // Lazy-load the 3D avatar — Three.js (~175KB gz) only fetched when Chat opens
@@ -88,6 +88,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
   const [fadingOut, setFadingOut] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionsCollapsed, setSuggestionsCollapsed] = useState(false);
   const [breachStep, setBreachStep] = useState(-1);
   const [breachPct, setBreachPct] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -294,7 +295,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
     setMessages(updatedMessages);
     setInput('');
     setIsLoading(true);
-    setShowSuggestions(false);
+    setSuggestionsCollapsed(true);
 
     try {
       const apiUrl = import.meta.env.VITE_CHAT_API_URL;
@@ -321,7 +322,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
       const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages }),
+        body: JSON.stringify({ messages: apiMessages, portfolioContext: PORTFOLIO_CONTEXT }),
       });
 
       if (!res.ok) {
@@ -538,42 +539,54 @@ export function Chat({ isOpen, onClose }: ChatProps) {
                   </div>
                 )}
 
+                {/* Suggestions — inside scroll area, collapsible after first message */}
+                {showSuggestions && phase === 'ready' && (
+                  <>
+                    {messages.some(m => m.role === 'user') && (
+                      <button
+                        className="chat-suggestions-toggle"
+                        onClick={() => setSuggestionsCollapsed(v => !v)}
+                      >
+                        {suggestionsCollapsed ? '// SHOW OPTIONS \u25BC' : '// HIDE OPTIONS \u25B2'}
+                      </button>
+                    )}
+                    {!suggestionsCollapsed && (
+                      <div className="chat-suggestions-container">
+                        <div className="chat-suggestions-group">
+                          <span className="chat-suggestions-label">// ABOUT ALT</span>
+                          <div className="chat-suggestions">
+                            {ALT_QUESTIONS.map((q, i) => (
+                              <button
+                                key={`alt-${i}`}
+                                className="chat-suggestion"
+                                onClick={() => handleSuggestionClick(q)}
+                              >
+                                {q}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="chat-suggestions-group">
+                          <span className="chat-suggestions-label">// ABOUT YASH</span>
+                          <div className="chat-suggestions">
+                            {YASH_QUESTIONS.map((q, i) => (
+                              <button
+                                key={`yash-${i}`}
+                                className="chat-suggestion"
+                                onClick={() => handleSuggestionClick(q)}
+                              >
+                                {q}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+
                 <div ref={messagesEndRef} />
               </div>
-
-              {/* Suggestions — two groups */}
-              {showSuggestions && phase === 'ready' && (
-                <div className="chat-suggestions-container">
-                  <div className="chat-suggestions-group">
-                    <span className="chat-suggestions-label">// ABOUT ALT</span>
-                    <div className="chat-suggestions">
-                      {ALT_QUESTIONS.map((q, i) => (
-                        <button
-                          key={`alt-${i}`}
-                          className="chat-suggestion"
-                          onClick={() => handleSuggestionClick(q)}
-                        >
-                          {q}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="chat-suggestions-group">
-                    <span className="chat-suggestions-label">// ABOUT YASH</span>
-                    <div className="chat-suggestions">
-                      {YASH_QUESTIONS.map((q, i) => (
-                        <button
-                          key={`yash-${i}`}
-                          className="chat-suggestion"
-                          onClick={() => handleSuggestionClick(q)}
-                        >
-                          {q}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* Input */}
               {phase === 'ready' && (

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
+import { GlitchButton } from './GlitchButton';
 
 const NAME = 'YASH RAJ SUMAN';
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>[]{}|\\_-=+';
@@ -298,12 +299,7 @@ export function Hero({ onJackIn }: HeroProps) {
           <a href="#showcase" className="btn-primary">
             VIEW PROJECTS
           </a>
-          <a href="#contact" className="btn-secondary">
-            SEND PING
-          </a>
-          <button className="btn-jackin" onClick={onJackIn}>
-            JACK INTO AI
-          </button>
+          <GlitchButton onClick={onJackIn} />
         </div>
       </div>
 

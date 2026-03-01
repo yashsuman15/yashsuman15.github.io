@@ -28,21 +28,28 @@ export function Showcase() {
       (entries) => {
         entries.forEach((entry) => {
           const pane = entry.target as HTMLElement;
-          const video = pane.querySelector('.showcase-video') as HTMLVideoElement | null;
+          const video = pane.querySelector('video[data-src]') as HTMLVideoElement | null;
           if (!video) return;
 
-          const hasSrc = video.src && !video.src.includes('YOUR_VIDEO');
-
-          if (entry.isIntersecting && hasSrc) {
-            video.play().catch(() => { });
-            pane.classList.add('is-playing');
-          } else if (hasSrc) {
+          if (entry.isIntersecting) {
+            // Lazy-load: set real src on first intersection
+            if (!video.src || video.src === window.location.href) {
+              video.src = video.dataset.src!;
+              video.load();
+            }
+            video.play().then(() => {
+              pane.classList.add('is-playing');
+            }).catch(() => {
+              // Autoplay blocked or load failed — don't show badge
+              pane.classList.remove('is-playing');
+            });
+          } else {
             video.pause();
             pane.classList.remove('is-playing');
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.3 }
     );
 
     const panes = document.querySelectorAll('.showcase-video-pane');
@@ -53,11 +60,19 @@ export function Showcase() {
 
   const handleVideoPaneClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const pane = e.currentTarget;
-    const video = pane.querySelector('.showcase-video') as HTMLVideoElement | null;
-    if (!video || !video.src || video.src.includes('YOUR_VIDEO')) return;
+    const video = pane.querySelector('video[data-src]') as HTMLVideoElement | null;
+    if (!video) return;
+
+    // Ensure src is loaded
+    if (!video.src || video.src === window.location.href) {
+      video.src = video.dataset.src!;
+      video.load();
+    }
+
     if (video.paused) {
-      video.play();
-      pane.classList.add('is-playing');
+      video.play().then(() => {
+        pane.classList.add('is-playing');
+      }).catch(() => {});
     } else {
       video.pause();
       pane.classList.remove('is-playing');
@@ -84,19 +99,18 @@ export function Showcase() {
             {/* Video pane */}
             <div
               className="showcase-video-pane"
-              data-video-index={idx}
-              onClick={handleVideoPaneClick}
+              onClick={project.videoSrc ? handleVideoPaneClick : undefined}
             >
-              <video
-                className="showcase-video"
-                muted
-                loop
-                playsInline
-                preload="none"
-                src={project.videoSrc || undefined}
-              />
-              {/* Placeholder when no video */}
-              {!project.videoSrc && (
+              {project.videoSrc ? (
+                <video
+                  className="showcase-video"
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  data-src={project.videoSrc}
+                />
+              ) : (
                 <div className="video-placeholder">
                   <div className="video-placeholder-grid" />
                   <div className="video-placeholder-lines">
@@ -106,16 +120,19 @@ export function Showcase() {
                   </div>
                   <div className="video-placeholder-icon">{'\u2B21'}</div>
                   <div className="video-placeholder-label">// DEMO FEED OFFLINE</div>
-                  <div className="video-play-hint">REPLACE WITH YOUR VIDEO</div>
                 </div>
               )}
-              <div className="video-playing-badge">
-                <div className="live-dot" />
-                LIVE DEMO
-              </div>
-              <div className="video-pause-hint">
-                <span>{'\u23F8'} PAUSE</span>
-              </div>
+              {project.videoSrc && (
+                <>
+                  <div className="video-playing-badge">
+                    <div className="live-dot" />
+                    LIVE DEMO
+                  </div>
+                  <div className="video-pause-hint">
+                    <span>{'\u23F8'} PAUSE</span>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Info pane */}

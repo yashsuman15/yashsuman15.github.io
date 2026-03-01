@@ -602,6 +602,39 @@ nav {
   transform: translateY(-7px) rotate(-45deg);
 }
 
+/* Nav CTA button — visually distinct from nav links */
+.nav-cta {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-decoration: none;
+  padding: 8px 20px;
+  border: 1px solid var(--cyan);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  transition: all 0.3s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: rgba(0, 245, 255, 0.12);
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.25);
+  color: #fff;
+  text-shadow: 0 0 8px rgba(0, 245, 255, 0.6);
+}
+
+/* Desktop: CTA sits outside nav-links, between toggle and status */
+.nav-cta-desktop {
+  display: inline-block;
+}
+
+/* Inside nav-links (used for mobile menu only), hide on desktop */
+.nav-links > .nav-cta {
+  display: none;
+}
+
 .nav-status {
   font-family: 'Share Tech Mono', monospace;
   font-size: 11px;
@@ -2222,42 +2255,28 @@ footer {
   }
 }
 
-/* JACK INTO AI Button */
+/* JACK INTO AI Button — canvas-rendered glitch (matches name glitch style) */
 .btn-jackin {
-  font-family: 'Orbitron', monospace;
-  font-size: 12px;
-  letter-spacing: 3px;
-  padding: 16px 36px;
   background: transparent;
-  color: #00E5FF;
-  text-decoration: none;
-  font-weight: 700;
-  border: 1px solid #00E5FF;
-  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-  transition: all .3s;
+  border: none;
+  padding: 0;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  box-shadow: 0 0 15px rgba(255, 26, 26, 0.25), 0 0 40px rgba(255, 0, 0, 0.08);
+  transition: box-shadow 0.3s;
+  line-height: 0;
 }
 
-.btn-jackin::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.08), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s;
-}
-
-.btn-jackin:hover::before {
-  transform: translateX(100%);
+.btn-jackin canvas {
+  display: block;
 }
 
 .btn-jackin:hover {
-  background: rgba(0, 229, 255, 0.1);
-  box-shadow: 0 0 30px rgba(0, 229, 255, 0.25), inset 0 0 30px rgba(0, 229, 255, 0.05);
-  border-color: #00E5FF;
-  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+  box-shadow:
+    0 0 20px rgba(255, 26, 26, 0.5),
+    0 0 60px rgba(255, 0, 0, 0.2),
+    0 0 100px rgba(255, 0, 0, 0.08);
 }
 
 /* Chat Overlay — Beyond the Blackwall void */
@@ -2716,7 +2735,7 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 0 32px;
+  margin-top: 12px;
   margin-bottom: 8px;
   animation: chatFadeIn 0.5s ease-out;
 }
@@ -2758,6 +2777,25 @@ footer {
   background: rgba(255, 26, 26, 0.1);
   border-color: rgba(255, 26, 26, 0.4);
   box-shadow: 0 0 12px rgba(255, 26, 26, 0.15);
+}
+
+.chat-suggestions-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(255, 120, 120, 0.45);
+  background: none;
+  border: 1px solid rgba(255, 26, 26, 0.1);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 12px;
+  align-self: flex-start;
+}
+.chat-suggestions-toggle:hover {
+  color: #FF1A1A;
+  border-color: rgba(255, 26, 26, 0.3);
+  box-shadow: 0 0 8px rgba(255, 26, 26, 0.1);
 }
 
 /* Input Area */
@@ -3392,6 +3430,18 @@ footer {
     letter-spacing: 5px;
   }
 
+  /* Hide desktop CTA, show the one inside hamburger menu */
+  .nav-cta-desktop {
+    display: none;
+  }
+
+  .nav-links > .nav-cta {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 12px 28px;
+  }
+
   /* Hero */
   #hero {
     padding: 100px 24px 60px;
@@ -3588,10 +3638,6 @@ footer {
     padding: 20px 16px;
   }
 
-  .chat-suggestions-container {
-    padding: 0 16px;
-  }
-
   .chat-input-area {
     padding: 12px 16px;
   }
@@ -3751,9 +3797,4 @@ footer {
     font-size: 13px;
   }
 
-  .btn-jackin {
-    padding: 14px 24px;
-    font-size: 11px;
-    letter-spacing: 2px;
-  }
 }

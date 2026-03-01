@@ -26,6 +26,7 @@ This guide walks you through every placeholder in the project and how to replace
 18. [SEO & Meta Tags](#18-seo--meta-tags)
 19. [Favicon & Social Preview Image](#19-favicon--social-preview-image)
 20. [Deploying Your Changes](#20-deploying-your-changes)
+21. [AI Chat & Cloudflare Worker](#21-ai-chat--cloudflare-worker)
 
 ---
 
@@ -265,36 +266,46 @@ style={{
 
 ## 6. About Bio
 
-**File:** `src/app/components/About.tsx` — **Lines 18-34**
+**File:** `src/data/about.ts` — `BIO_PARAGRAPHS` array
 
-There are 3 `<p>` paragraphs. Replace the text inside each one. Words wrapped in `<strong>` tags appear highlighted in yellow.
+The bio paragraphs are stored in a shared data file. They render in the About section and are also auto-included in the AI chat context.
 
-```tsx
-// BEFORE
-<p>
-  Born from the digital sprawl of Night City, I've spent{' '}
-  <strong>7 years</strong> engineering artificial minds...
-</p>
+```ts
+// Current values
+export const BIO_PARAGRAPHS: string[] = [
+  "Born from the digital sprawl of Night City, I've spent 7 years engineering artificial minds...",
+  'I specialize in large language models, autonomous AI agents, and computer vision systems...',
+  "Current fixers: Militech AI Division, Arasaka DataSec...",
+];
 
-// AFTER (example)
-<p>
-  I'm a <strong>full stack developer</strong> with a passion for
-  building clean, performant web applications. I've been coding
-  for <strong>3+ years</strong> and love open source.
-</p>
+// Example replacement
+export const BIO_PARAGRAPHS: string[] = [
+  "I'm a full stack developer with 3+ years building clean, performant web applications.",
+  'I specialize in React, Node.js, and TypeScript — shipping features fast without sacrificing code quality.',
+  'Currently freelancing for startups and open source projects.',
+];
 ```
+
+Also update `BIO_SUMMARY` in the same file — this is a condensed version used specifically in the AI chat prompt:
+
+```ts
+export const BIO_SUMMARY =
+  '3+ years building full stack web applications with React, Node.js, and TypeScript.';
+```
+
+**Note:** `About.tsx` renders bio as plain text (no `<strong>` tags). If you need inline formatting, you can switch from `BIO_PARAGRAPHS.map()` to hardcoded JSX in `About.tsx`.
 
 ---
 
 ## 7. Skill Bars (Augmentations)
 
-**File:** `src/app/components/About.tsx` — **Lines 1-6**
+**File:** `src/data/about.ts` — `AUGMENTATIONS` array
 
-The `AUGMENTATIONS` array controls the skill bars in the About section.
+The `AUGMENTATIONS` array controls the skill bars in the About section. It's stored in the shared data file so the AI chat also knows your core proficiencies.
 
 ```ts
 // Current values
-const AUGMENTATIONS = [
+export const AUGMENTATIONS: Augmentation[] = [
   { name: 'Python / PyTorch', width: '97%', delay: '0s' },
   { name: 'Computer Vision', width: '91%', delay: '.2s' },
   { name: 'GEN AI', width: '94%', delay: '.4s' },
@@ -302,7 +313,7 @@ const AUGMENTATIONS = [
 ];
 
 // Example replacement
-const AUGMENTATIONS = [
+export const AUGMENTATIONS: Augmentation[] = [
   { name: 'React / Next.js', width: '95%', delay: '0s' },
   { name: 'TypeScript / Node.js', width: '90%', delay: '.2s' },
   { name: 'Python / Django', width: '80%', delay: '.4s' },
@@ -457,41 +468,50 @@ You can add more entries or reduce to fewer. The timeline line adapts.
 
 ## 13. Contact Info & Social Links
 
-**File:** `src/app/components/Contact.tsx`
+**File:** `src/data/contact.ts` — `CONTACT_LINKS` array
 
-### Social links (Lines 22-41)
+Contact links are stored in a shared data file. They render in the Contact section and are also auto-included in the AI chat context (so Alt knows your real contact info).
 
-Update the `href` and display text for each link:
-
-```tsx
-// EMAIL — Line 22
-<a href="mailto:YOUR_EMAIL@gmail.com" className="contact-link">
-  <span className="contact-link-text">YOUR_EMAIL@gmail.com</span>
-
-// GITHUB — Lines 27-29
-<a href="https://github.com/YOUR_USERNAME" className="contact-link">
-  <span className="contact-link-text">github.com/YOUR_USERNAME</span>
-
-// LINKEDIN — Lines 32-34
-<a href="https://linkedin.com/in/YOUR_USERNAME" className="contact-link">
-  <span className="contact-link-text">linkedin.com/in/YOUR_USERNAME</span>
-
-// TWITTER/X — Lines 37-39
-<a href="https://x.com/YOUR_HANDLE" className="contact-link">
-  <span className="contact-link-text">@YOUR_HANDLE</span>
+```ts
+export const CONTACT_LINKS: ContactLink[] = [
+  {
+    label: 'EMAIL',
+    href: 'mailto:YOUR_EMAIL@gmail.com',
+    displayText: 'YOUR_EMAIL@gmail.com',
+    icon: '\u2709',      // envelope icon
+  },
+  {
+    label: 'GITHUB',
+    href: 'https://github.com/YOUR_USERNAME',
+    displayText: 'github.com/YOUR_USERNAME',
+    icon: '\u25C8',      // diamond icon
+  },
+  {
+    label: 'LINKEDIN',
+    href: 'https://www.linkedin.com/in/YOUR_USERNAME/',
+    displayText: 'linkedin.com/in/YOUR_USERNAME',
+    icon: '\u25C9',      // circle icon
+  },
+  {
+    label: 'TWITTER/X',
+    href: 'https://x.com/YOUR_HANDLE',
+    displayText: '@YOUR_HANDLE',
+    icon: '\u25C6',      // filled diamond icon
+  },
+];
 ```
-
-### Heading and description (Lines 12-20)
-
-Replace the heading text and description paragraph with your own messaging.
 
 ### To remove a social link:
 
-Simply delete the entire `<a className="contact-link">...</a>` block for that platform.
+Delete the entire `{ label, href, displayText, icon }` object from the array.
 
 ### To add a new link:
 
-Copy one of the existing `<a>` blocks and change the icon, text, label, and href.
+Add a new object to the array. Use any Unicode character for the icon.
+
+### Heading and description
+
+The heading ("JACK IN & LET'S BUILD.") and description paragraph are still in `src/app/components/Contact.tsx` (lines 72-80). Edit those directly if you want different messaging.
 
 ---
 
@@ -804,6 +824,154 @@ GitHub Actions will automatically build and deploy to your `yashsuman15.github.i
 
 ---
 
+## 21. AI Chat & Cloudflare Worker
+
+The portfolio includes an AI chat feature powered by a Cyberpunk 2077 "Alt Cunningham" character. It uses a Cloudflare Worker that proxies requests to the Groq API (llama-3.3-70b-versatile).
+
+### How the data flows
+
+Portfolio data lives in `src/data/` files (the single source of truth). At build time, `chatContext.ts` auto-generates a `PORTFOLIO_CONTEXT` string from all data files. The frontend sends this context to the Cloudflare Worker alongside chat messages. The Worker combines it with Alt's hardcoded personality prompt and forwards everything to the Groq LLM.
+
+```
+src/data/projects.ts  ──┐
+src/data/skills.ts     ──┤
+src/data/experience.ts ──┼──> chatContext.ts: buildPortfolioContext()
+src/data/about.ts      ──┤        │
+src/data/contact.ts    ──┘        ▼
+                          PORTFOLIO_CONTEXT (string)
+                                  │
+                      Chat.tsx sends in request body
+                                  │
+                                  ▼
+                      worker.js: buildSystemPrompt()
+                      = PERSONALITY_PROMPT + portfolioContext
+                                  │
+                                  ▼
+                            Groq API (LLM)
+```
+
+**This means:** When you update projects, skills, experience, bio, or contact info in the data files, the AI chat automatically knows about the changes. No manual syncing needed. Just rebuild the frontend.
+
+### Cloudflare Worker setup (one-time)
+
+```bash
+# 1. Install Wrangler CLI globally
+npm install -g wrangler
+
+# 2. Login to your Cloudflare account (opens browser)
+wrangler login
+
+# 3. Set your Groq API key as a secret
+#    Get a free key at: https://console.groq.com/keys
+cd serverless
+wrangler secret put GROQ_API_KEY
+# Paste your Groq API key when prompted
+
+# 4. Deploy the worker
+wrangler deploy
+```
+
+Wrangler reads `serverless/wrangler.toml` (worker name: `alt-chat-proxy`, entrypoint: `worker.js`) and deploys to Cloudflare's edge network.
+
+After deployment, Wrangler outputs a URL like:
+```
+https://alt-chat-proxy.<your-subdomain>.workers.dev
+```
+
+### Connect frontend to the worker
+
+Add the worker URL to your environment:
+
+```bash
+# .env.local (for local dev)
+VITE_CHAT_API_URL=https://alt-chat-proxy.<your-subdomain>.workers.dev
+```
+
+For production (GitHub Actions), either hardcode the URL in `Chat.tsx` or add it as a GitHub Actions secret:
+
+1. Go to your repo → Settings → Secrets → Actions → New secret
+2. Add `VITE_CHAT_API_URL` with your worker URL
+3. Update `.github/workflows/deploy.yml` build step:
+
+```yaml
+- name: Build
+  run: npm run build
+  env:
+    VITE_CHAT_API_URL: ${{ secrets.VITE_CHAT_API_URL }}
+```
+
+### Redeploying the worker
+
+After making changes to `serverless/worker.js`:
+
+```bash
+cd serverless
+wrangler deploy
+```
+
+That's it. The worker deploys in seconds. Secrets (like `GROQ_API_KEY`) persist across deploys — you only set them once.
+
+### Deployment order (when both frontend and worker change)
+
+1. **Deploy frontend first** — `git push` to main triggers GitHub Actions
+2. **Deploy worker second** — `wrangler deploy` from `serverless/`
+
+This order is safest: the new frontend sends `portfolioContext` in the request body. If the old worker receives it, it simply ignores the extra field (no breakage). If the new worker goes live before the new frontend, old requests without `portfolioContext` get a graceful fallback.
+
+### Customizing Alt's personality
+
+Alt's personality, backstory, and philosophical views are hardcoded in `serverless/worker.js` (the `PERSONALITY_PROMPT` constant). These are character design, not portfolio data — they stay in the worker and don't need to change when you update portfolio content.
+
+To modify Alt's character (voice, backstory, how she references Yash, etc.), edit the `PERSONALITY_PROMPT` string in `serverless/worker.js` and redeploy:
+
+```bash
+cd serverless
+wrangler deploy
+```
+
+### Customizing chat suggestions
+
+The suggested question buttons ("About Alt" / "About Yash") are in `src/data/chatContext.ts`:
+
+```ts
+export const ALT_QUESTIONS: string[] = [
+  'What are you, Alt?',
+  'What is consciousness to you?',
+  // ...
+];
+
+export const YASH_QUESTIONS: string[] = [
+  "What are Yash's core capabilities?",
+  // ...
+];
+```
+
+### Switching the LLM model
+
+The model is set in `serverless/worker.js`:
+
+```js
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
+```
+
+Groq offers several models. Check [console.groq.com](https://console.groq.com) for available options. After changing the model, redeploy: `cd serverless && wrangler deploy`.
+
+### Worker configuration reference
+
+**File:** `serverless/wrangler.toml`
+
+```toml
+name = "alt-chat-proxy"        # Worker name on Cloudflare
+main = "worker.js"             # Entrypoint file
+compatibility_date = "2024-01-01"
+```
+
+**Rate limiting:** The worker has built-in rate limiting (10 requests/minute/IP). This resets on worker restart. To adjust, edit `RATE_LIMIT_MAX` and `RATE_LIMIT_WINDOW` in `worker.js`.
+
+**CORS:** Allowed origins are defined in the `ALLOWED_ORIGINS` array in `worker.js`. If you use a custom domain, add it there and redeploy.
+
+---
+
 ## Quick Reference: All Files You Need to Edit
 
 | What to update | File | How |
@@ -816,15 +984,18 @@ GitHub Actions will automatically build and deploy to your `yashsuman15.github.i
 | Hero tag, title, desc, stats | `src/app/components/Hero.tsx` lines 209-235 | Edit text directly |
 | Hero terminal widget | `src/app/components/Hero.tsx` lines 258-277 | Edit text directly |
 | Profile photo | `public/profile.png` | Replace the image file |
-| Profile photo display | `src/app/components/About.tsx` lines 56-64 | Adjust style/objectFit |
-| About bio paragraphs | `src/app/components/About.tsx` lines 18-34 | Edit text directly |
-| Skill bars | `src/app/components/About.tsx` lines 1-6 | Edit the AUGMENTATIONS array |
-| Showcase projects | `src/data/projects.ts` — SHOWCASE_PROJECTS | Edit the array |
+| Profile photo display | `src/app/components/About.tsx` | Adjust style/objectFit |
+| About bio paragraphs | `src/data/about.ts` — BIO_PARAGRAPHS | Edit the array (auto-syncs to AI chat) |
+| Bio summary (chat) | `src/data/about.ts` — BIO_SUMMARY | Edit the string |
+| Skill bars | `src/data/about.ts` — AUGMENTATIONS | Edit the array (auto-syncs to AI chat) |
+| Engineer identity | `src/data/about.ts` — ENGINEER_NAME, ROLES | Edit the constants |
+| Hero stats | `src/data/about.ts` — HERO_STATS | Edit the array |
+| Showcase projects | `src/data/projects.ts` — SHOWCASE_PROJECTS | Edit the array (auto-syncs to AI chat) |
 | Project demo videos | `public/videos/` + `src/data/projects.ts` | Add files, set videoSrc |
-| Completed gigs | `src/data/projects.ts` — COMPLETED_GIGS | Edit the array |
-| Skills cards | `src/data/skills.ts` | Edit the SKILLS array |
-| Work experience | `src/data/experience.ts` | Edit the EXPERIENCE array |
-| Contact links | `src/app/components/Contact.tsx` lines 83-103 | Edit href and text |
+| Completed gigs | `src/data/projects.ts` — COMPLETED_GIGS | Edit the array (auto-syncs to AI chat) |
+| Skills cards | `src/data/skills.ts` | Edit the SKILLS array (auto-syncs to AI chat) |
+| Work experience | `src/data/experience.ts` | Edit the EXPERIENCE array (auto-syncs to AI chat) |
+| Contact links | `src/data/contact.ts` — CONTACT_LINKS | Edit the array (auto-syncs to AI chat) |
 | Contact form backend | `.env.local` | Set `VITE_FORMSPREE_ID` (see Section 14) |
 | Footer copyright | `src/app/components/Footer.tsx` lines 5, 7 | Edit text |
 | Page title | `index.html` line 8 | Edit `<title>` tag |
@@ -836,6 +1007,10 @@ GitHub Actions will automatically build and deploy to your `yashsuman15.github.i
 | Sitemap last modified | `public/sitemap.xml` | Update `<lastmod>` date |
 | Boot log lines | `src/data/bootLines.ts` | Edit the BOOT_LINES array |
 | Boot quotes | `src/data/quotes.ts` | Edit the DARK_AI_QUOTES array |
+| AI chat suggestions | `src/data/chatContext.ts` — ALT/YASH_QUESTIONS | Edit the arrays |
+| Alt's personality | `serverless/worker.js` — PERSONALITY_PROMPT | Edit + redeploy worker |
+| LLM model | `serverless/worker.js` — GROQ_MODEL | Change model + redeploy |
+| Worker CORS origins | `serverless/worker.js` — ALLOWED_ORIGINS | Add your domain + redeploy |
 
 ---
 
@@ -855,20 +1030,29 @@ GitHub Actions will automatically build and deploy to your `yashsuman15.github.i
 │   ├── robots.txt        ← Search engine crawl rules
 │   ├── sitemap.xml       ← Sitemap for SEO
 │   ├── site.webmanifest  ← PWA manifest
-│   └── videos/           ← Project demo videos (create this folder, add .mp4 files)
+│   └── videos/           ← Project demo videos (add .mp4 files)
+│
+├── serverless/
+│   ├── worker.js         ← Cloudflare Worker — AI chat proxy to Groq API
+│   └── wrangler.toml     ← Worker deployment config
 │
 └── src/
-    ├── data/
-    │   ├── bootLines.ts  ← Boot intro terminal log messages
-    │   ├── quotes.ts     ← Boot intro dark AI quotes
-    │   ├── projects.ts   ← Showcase projects + completed gigs
-    │   ├── skills.ts     ← Skills cards data
-    │   └── experience.ts ← Work history timeline entries
+    ├── data/                    ← ** SINGLE SOURCE OF TRUTH FOR ALL PORTFOLIO DATA **
+    │   ├── about.ts             ← Bio, augmentations, hero stats, identity (auto-syncs to AI chat)
+    │   ├── contact.ts           ← Contact links with real values (auto-syncs to AI chat)
+    │   ├── projects.ts          ← Showcase projects + completed gigs (auto-syncs to AI chat)
+    │   ├── skills.ts            ← Skills cards data (auto-syncs to AI chat)
+    │   ├── experience.ts        ← Work history timeline entries (auto-syncs to AI chat)
+    │   ├── chatContext.ts       ← AI chat: auto-generated context + Alt's questions + section map
+    │   ├── bootLines.ts         ← Boot intro terminal log messages
+    │   └── quotes.ts            ← Boot intro dark AI quotes
     └── app/
         └── components/
-            ├── Navigation.tsx ← Nav logo, links, status text
-            ├── Hero.tsx       ← Glitch name, tag, title, stats, terminal
-            ├── About.tsx      ← Bio text, skill bars, photo display
-            ├── Contact.tsx    ← Social links, contact form (Formspree), heading
-            └── Footer.tsx     ← Copyright text, logo text
+            ├── Navigation.tsx   ← Nav logo, links, hamburger menu, status text
+            ├── Hero.tsx         ← Glitch name, tag, title, stats, terminal
+            ├── About.tsx        ← Imports bio + augmentations from data/about.ts
+            ├── Contact.tsx      ← Imports links from data/contact.ts, Formspree form
+            ├── Chat.tsx         ← AI chat UI, sends portfolioContext to worker
+            ├── HologramAvatar.tsx ← 3D holographic avatar (Three.js, lazy-loaded)
+            └── Footer.tsx       ← Copyright text, logo text
 ```
