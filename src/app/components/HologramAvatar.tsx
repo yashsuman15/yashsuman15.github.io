@@ -38,6 +38,7 @@ const HOLO_FRAGMENT = /* glsl */ `
   uniform float uOpacity;
   uniform float uGlitchIntensity;
   uniform vec3 uCameraPosition;
+  uniform float uSpeakPulse; // 0..1 — flares when Alt speaks
 
   // Simple pseudo-random
   float rand(vec2 co) {
@@ -49,6 +50,10 @@ const HOLO_FRAGMENT = /* glsl */ `
     vec3 viewDir = normalize(uCameraPosition - vWorldPosition);
     float fresnel = 1.0 - abs(dot(viewDir, vNormal));
     fresnel = pow(fresnel, 1.8);
+
+    // ── Speaking pulse: intensify fresnel when Alt speaks ──
+    float fresnelBoost = fresnel + uSpeakPulse * 0.4;
+    fresnelBoost = clamp(fresnelBoost, 0.0, 1.0);
 
     // ── Scanlines (scrolling horizontal bands) ──
     float scanFreq = 100.0;
@@ -65,13 +70,16 @@ const HOLO_FRAGMENT = /* glsl */ `
     vec3 darkRed  = vec3(0.4, 0.0, 0.0);      // deep void red
     vec3 hotWhite = vec3(1.0, 0.85, 0.85);    // glitch flash — warm white
 
-    // Base color: blood red with bright highlights at edges
-    vec3 baseColor = mix(bloodRed, white, fresnel * 0.45);
+    // Base color: blood red with bright highlights at edges (boosted by speak pulse)
+    vec3 baseColor = mix(bloodRed, white, fresnelBoost * 0.45);
     // Add depth: darker in center, glowing at edges
-    baseColor = mix(darkRed, baseColor, 0.35 + fresnel * 0.65);
+    baseColor = mix(darkRed, baseColor, 0.35 + fresnelBoost * 0.65);
+
+    // Speaking pulse: overall brightness surge — hot white edge flare
+    baseColor += vec3(0.35, 0.12, 0.08) * uSpeakPulse * fresnelBoost;
 
     // ── Chromatic aberration at edges ──
-    float rShift = fresnel * 0.12;
+    float rShift = fresnelBoost * 0.12;
     baseColor.r += rShift;
     baseColor.b -= rShift * 0.3;
 
@@ -86,10 +94,13 @@ const HOLO_FRAGMENT = /* glsl */ `
     baseColor += vec3(0.5, 0.1, 0.08) * sweep;
 
     // ── Alpha computation ──
-    float baseAlpha = 0.12 + fresnel * 0.65;
+    float baseAlpha = 0.12 + fresnelBoost * 0.65;
     float alpha = baseAlpha * scanline * flicker * uOpacity;
     alpha += fineScan * uOpacity * 0.5;
     alpha += sweep * 0.3 * uOpacity;
+
+    // Speaking pulse: overall alpha boost (glow effect)
+    alpha += uSpeakPulse * 0.18 * uOpacity;
 
     // Minimum visibility so the model is never invisible in center
     alpha = max(alpha, 0.04 * uOpacity);
@@ -219,11 +230,12 @@ function createProceduralHumanoid(): THREE.Group {
 
 interface HologramAvatarProps {
   phase: string; // 'materializing' | 'glitching' | '' (idle)
+  isSpeaking?: boolean; // true briefly when Alt sends a new message
 }
 
 const MODEL_PATH = '/models/alt-avatar.glb';
 
-export function HologramAvatar({ phase }: HologramAvatarProps) {
+export function HologramAvatar({ phase, isSpeaking = false }: HologramAvatarProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef({
     renderer: null as THREE.WebGLRenderer | null,
@@ -244,6 +256,21 @@ export function HologramAvatar({ phase }: HologramAvatarProps) {
     lastMicroGlitch: 0,
     microGlitchActive: false,
     microGlitchEnd: 0,
+    // ── 4th-wall: Mouse tracking ──
+    mouseX: 0,       // normalized -1..1 (target)
+    mouseY: 0,       // normalized -1..1 (target)
+    currentLookX: 0,  // smoothed
+    currentLookY: 0,  // smoothed
+    mouseActive: false,
+    mouseIdleTimer: 0,
+    // ── 4th-wall: Forward lean on materialize ──
+    targetLeanZ: 0,
+    currentLeanZ: -0.3,  // start pulled back
+    targetScale: 1.0,
+    currentScale: 0.92,
+    // ── 4th-wall: Speaking pulse ──
+    speakPulse: 0,       // 0..1, decays in animation loop
+    speakTriggered: false,
   });
 
   // ── Create holographic material ──
@@ -256,6 +283,7 @@ export function HologramAvatar({ phase }: HologramAvatarProps) {
         uOpacity: { value: 0 },
         uGlitchIntensity: { value: 0 },
         uCameraPosition: { value: new THREE.Vector3() },
+        uSpeakPulse: { value: 0 },
       },
       transparent: true,
       side: THREE.DoubleSide,
@@ -393,6 +421,21 @@ export function HologramAvatar({ phase }: HologramAvatarProps) {
       }
     );
 
+    // ── Mouse tracking (4th-wall effect) ──
+    const handlePointerMove = (e: PointerEvent) => {
+      if (state.disposed) return;
+      // Normalize to -1..1 across the full viewport
+      state.mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      state.mouseY = -((e.clientY / window.innerHeight) * 2 - 1); // invert Y
+      state.mouseActive = true;
+      // Reset idle timer — if mouse stops, we fade back to idle sway
+      clearTimeout(state.mouseIdleTimer);
+      state.mouseIdleTimer = window.setTimeout(() => {
+        state.mouseActive = false;
+      }, 3000);
+    };
+    window.addEventListener('pointermove', handlePointerMove);
+
     // ── Animation loop ──
     const animate = () => {
       if (state.disposed) return;
@@ -420,12 +463,20 @@ export function HologramAvatar({ phase }: HologramAvatarProps) {
         }
       }
 
+      // ── 4th-wall: Speaking pulse decay ──
+      if (state.speakPulse > 0.005) {
+        state.speakPulse *= 0.96; // smooth exponential decay (~800ms to near-zero)
+      } else {
+        state.speakPulse = 0;
+      }
+
       // Update uniforms
       if (holoMaterial) {
         holoMaterial.uniforms.uTime.value = elapsed;
         holoMaterial.uniforms.uOpacity.value = state.currentOpacity;
         holoMaterial.uniforms.uGlitchIntensity.value = state.currentGlitch;
         holoMaterial.uniforms.uCameraPosition.value.copy(camera.position);
+        holoMaterial.uniforms.uSpeakPulse.value = state.speakPulse;
       }
       if (wireMaterial) {
         wireMaterial.uniforms.uTime.value = elapsed;
@@ -433,9 +484,39 @@ export function HologramAvatar({ phase }: HologramAvatarProps) {
         wireMaterial.uniforms.uGlitchIntensity.value = state.currentGlitch;
       }
 
-      // Gentle idle rotation
+      // ── 4th-wall: Model transforms (mouse tracking + forward lean + idle sway) ──
       if (state.model) {
-        state.model.rotation.y = Math.sin(elapsed * 0.4) * 0.12;
+        // Mouse tracking: smooth lerp toward cursor
+        const lerpFactor = 0.05;
+        if (state.mouseActive) {
+          state.currentLookX += (state.mouseX - state.currentLookX) * lerpFactor;
+          state.currentLookY += (state.mouseY - state.currentLookY) * lerpFactor;
+        } else {
+          // Fade back to center when mouse is idle
+          state.currentLookX += (0 - state.currentLookX) * 0.02;
+          state.currentLookY += (0 - state.currentLookY) * 0.02;
+        }
+
+        // Combine mouse tracking with subtle idle sway
+        const idleSway = Math.sin(elapsed * 0.4) * 0.06; // reduced from 0.12
+        const maxRotY = 0.26; // ~15 degrees horizontal
+        const maxRotX = 0.14; // ~8 degrees vertical
+        state.model.rotation.y = state.currentLookX * maxRotY + idleSway;
+        state.model.rotation.x = -state.currentLookY * maxRotX; // look up/down
+
+        // Forward lean: smooth Z translation
+        state.currentLeanZ += (state.targetLeanZ - state.currentLeanZ) * 0.03;
+        state.model.position.z = state.currentLeanZ;
+
+        // Scale animation (accompanies forward lean)
+        state.currentScale += (state.targetScale - state.currentScale) * 0.03;
+        const baseScale = state.model.scale.x; // preserve fitModel's scale
+        // Only adjust if we haven't stored the base scale yet
+        if (!(state as any)._baseScale) {
+          (state as any)._baseScale = baseScale;
+        }
+        const bs = (state as any)._baseScale as number;
+        state.model.scale.setScalar(bs * state.currentScale);
       }
 
       renderer.render(scene, camera);
@@ -459,6 +540,8 @@ export function HologramAvatar({ phase }: HologramAvatarProps) {
     return () => {
       state.disposed = true;
       cancelAnimationFrame(state.rafId);
+      clearTimeout(state.mouseIdleTimer);
+      window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('resize', handleResize);
 
       // Dispose Three.js resources
@@ -495,6 +578,11 @@ export function HologramAvatar({ phase }: HologramAvatarProps) {
         state.targetOpacity = 0;
         state.currentOpacity = 0;
         state.targetGlitch = 0.5;
+        // 4th-wall: Start pulled back, lean forward during materialize
+        state.currentLeanZ = -0.3;
+        state.targetLeanZ = 0;
+        state.currentScale = 0.92;
+        state.targetScale = 1.0;
         // Animate in
         {
           const matTimer = window.setTimeout(() => {
@@ -523,9 +611,20 @@ export function HologramAvatar({ phase }: HologramAvatarProps) {
         // Idle — opacity stays at 1, glitch at 0
         state.targetOpacity = 1;
         state.targetGlitch = 0;
+        // Ensure lean is forward
+        state.targetLeanZ = 0;
+        state.targetScale = 1.0;
         break;
     }
   }, [phase]);
+
+  // ── React to isSpeaking changes ──
+  useEffect(() => {
+    if (isSpeaking) {
+      const state = stateRef.current;
+      state.speakPulse = 1.0; // spike to full, will decay in animation loop
+    }
+  }, [isSpeaking]);
 
   return (
     <div

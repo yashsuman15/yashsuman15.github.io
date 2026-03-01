@@ -34,7 +34,7 @@ export function Showcase() {
           const hasSrc = video.src && !video.src.includes('YOUR_VIDEO');
 
           if (entry.isIntersecting && hasSrc) {
-            video.play().catch(() => {});
+            video.play().catch(() => { });
             pane.classList.add('is-playing');
           } else if (hasSrc) {
             video.pause();
@@ -74,7 +74,7 @@ export function Showcase() {
     <section id="showcase">
       <div className="section-header">
         <span className="section-num">02</span>
-        <h2 className="section-title">FLAGSHIP GIGS</h2>
+        <h2 className="section-title">FLAGSHIP PROJECTS</h2>
         <div className="section-line" />
       </div>
 

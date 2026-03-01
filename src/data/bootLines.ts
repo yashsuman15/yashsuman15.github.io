@@ -14,7 +14,7 @@ export const BOOT_LINES: BootLine[] = [
   { text: '[ WARN ]  Ethical constraint buffer at 61.4%', cls: 'warn', delay: 980 },
   { text: '[  OK  ]  Predictive empathy module loaded', cls: 'ok', delay: 1120 },
   { text: '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', cls: 'dim', delay: 1260 },
-  { text: 'Loading identity profile: viktor_ex...', cls: '', delay: 1390 },
+  { text: 'Loading identity profile: yash_suman', cls: '', delay: 1390 },
   { text: '[  OK  ]  Identity verified. No active bounty.', cls: 'ok', delay: 1560 },
   { text: '[  OK  ]  Neural implants synced. Latency: 0.3ms', cls: 'ok', delay: 1700 },
   { text: '[  OK  ]  Clearance level: SHADOW-TIER unlocked', cls: 'ok', delay: 1830 },

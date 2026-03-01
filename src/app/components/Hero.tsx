@@ -172,9 +172,8 @@ export function Hero({ onJackIn }: HeroProps) {
       // Noise blocks
       if (glitchLevel > 0.25) {
         for (let i = 0; i < Math.floor(glitchLevel * 10); i++) {
-          ctx.fillStyle = `rgba(${
-            Math.random() > 0.5 ? '255,0,60' : '0,245,255'
-          },${Math.random() * 0.55})`;
+          ctx.fillStyle = `rgba(${Math.random() > 0.5 ? '255,0,60' : '0,245,255'
+            },${Math.random() * 0.55})`;
           ctx.fillRect(
             Math.random() * W,
             Math.random() * H,
@@ -197,7 +196,7 @@ export function Hero({ onJackIn }: HeroProps) {
       if (
         !state.burstActive &&
         state.nameIdleTime - state.lastGlitchBurst >
-          2200 + Math.random() * 4000
+        2200 + Math.random() * 4000
       ) {
         state.burstActive = true;
         state.burstDuration = 200 + Math.random() * 450;
@@ -296,14 +295,14 @@ export function Hero({ onJackIn }: HeroProps) {
           </div>
         </div>
         <div className="hero-btns">
-          <a href="#projects" className="btn-primary">
+          <a href="#showcase" className="btn-primary">
             VIEW PROJECTS
           </a>
           <a href="#contact" className="btn-secondary">
             SEND PING
           </a>
           <button className="btn-jackin" onClick={onJackIn}>
-            ASK MY AI AGENT
+            JACK INTO AI
           </button>
         </div>
       </div>

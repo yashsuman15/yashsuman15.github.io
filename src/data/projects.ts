@@ -36,7 +36,7 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       { label: 'RLHF', color: 'yellow' },
       { label: 'vLLM', color: 'purple' },
     ],
-    videoSrc: '',
+    videoSrc: 'public/videos/intrusion_detection_compressed.mp4',
     caseLink: '#',
     githubLink: '#',
   },

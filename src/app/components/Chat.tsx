@@ -86,9 +86,11 @@ export function Chat({ isOpen, onClose }: ChatProps) {
   const [headerText, setHeaderText] = useState('');
   const [avatarClass, setAvatarClass] = useState('materializing');
   const [fadingOut, setFadingOut] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [breachStep, setBreachStep] = useState(-1);
-  const [breachProgress, setBreachProgress] = useState(0);
+  const [breachPct, setBreachPct] = useState(0);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -97,6 +99,14 @@ export function Chat({ isOpen, onClose }: ChatProps) {
   // Scroll to bottom when messages change
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  // Trigger a speaking pulse on the avatar (brief true→false toggle)
+  const speakPulseRef = useRef<number>(0);
+  const triggerSpeakPulse = useCallback(() => {
+    clearTimeout(speakPulseRef.current);
+    setIsSpeaking(true);
+    speakPulseRef.current = window.setTimeout(() => setIsSpeaking(false), 150);
   }, []);
 
   useEffect(() => {
@@ -117,21 +127,19 @@ export function Chat({ isOpen, onClose }: ChatProps) {
       timers.push(t);
     });
 
-    // Animate the progress bar
-    const progressStart = performance.now();
-    let rafId: number;
-    const animateProgress = () => {
-      const elapsed = performance.now() - progressStart;
+    // Animate the progress bar with setInterval (reliable, ~20fps)
+    const startTime = Date.now();
+    const progressInterval = window.setInterval(() => {
+      const elapsed = Date.now() - startTime;
       const p = Math.min(elapsed / BREACH_TOTAL_DURATION, 1);
-      // Ease-in-out with stutters to feel like hacking
-      const stutter = Math.sin(elapsed * 0.02) * 0.02;
-      setBreachProgress(Math.min(p + stutter, 1));
-      if (p < 1) rafId = requestAnimationFrame(animateProgress);
-    };
-    rafId = requestAnimationFrame(animateProgress);
+      setBreachPct(Math.floor(p * 100));
+      if (p >= 1) clearInterval(progressInterval);
+    }, 50);
+    timers.push(progressInterval);
 
     // Transition to materialize after full sequence
     const tEnd = window.setTimeout(() => {
+      setBreachPct(100);
       setPhase('materialize');
     }, BREACH_TOTAL_DURATION);
     timers.push(tEnd);
@@ -139,7 +147,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
     timersRef.current.push(...timers);
     return () => {
       timers.forEach(clearTimeout);
-      cancelAnimationFrame(rafId);
+      clearInterval(progressInterval);
     };
   }, [isOpen, phase]);
 
@@ -187,6 +195,9 @@ export function Chat({ isOpen, onClose }: ChatProps) {
   // Phase 3: Intro — Alt's intro message typewriter
   useEffect(() => {
     if (phase !== 'intro') return;
+
+    // 4th-wall: pulse avatar when Alt starts speaking
+    triggerSpeakPulse();
 
     let idx = 0;
     const typeInterval = window.setInterval(() => {
@@ -238,13 +249,19 @@ export function Chat({ isOpen, onClose }: ChatProps) {
   // ── Handlers ──
 
   function handleDisconnect() {
-    setFadingOut(true);
+    if (disconnecting) return; // prevent double-trigger
+    setDisconnecting(true);
+
+    // Trigger avatar glitch burst immediately
+    setAvatarClass('glitching');
+
+    // After the corruption sequence completes (~1.3s), close and reset
     setTimeout(() => {
       onClose();
       // Reset state for next open
       setPhase('breach');
       setBreachStep(-1);
-      setBreachProgress(0);
+      setBreachPct(0);
       setMessages([]);
       setInput('');
       setIsLoading(false);
@@ -253,17 +270,19 @@ export function Chat({ isOpen, onClose }: ChatProps) {
       setHeaderText('');
       setAvatarClass('materializing');
       setFadingOut(false);
+      setDisconnecting(false);
       setShowSuggestions(false);
-    }, 400);
+      setIsSpeaking(false);
+    }, 1350);
   }
 
   function handleNavigate(sectionId: string) {
     handleDisconnect();
-    // Delay scroll slightly so overlay closes first
+    // Delay scroll until corruption sequence finishes and overlay closes
     setTimeout(() => {
       const el = document.getElementById(sectionId);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 450);
+    }, 1400);
   }
 
   async function handleSend(text?: string) {
@@ -289,6 +308,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
         setMessages([...updatedMessages, fallback]);
         setIsLoading(false);
         setShowSuggestions(true);
+        triggerSpeakPulse();
         return;
       }
 
@@ -315,6 +335,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
       };
       setMessages([...updatedMessages, altResponse]);
       setShowSuggestions(true);
+      triggerSpeakPulse();
     } catch {
       const errorMsg: ChatMessage = {
         role: 'alt',
@@ -323,6 +344,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
       };
       setMessages([...updatedMessages, errorMsg]);
       setShowSuggestions(true);
+      triggerSpeakPulse();
     } finally {
       setIsLoading(false);
     }
@@ -344,7 +366,18 @@ export function Chat({ isOpen, onClose }: ChatProps) {
   if (!isOpen) return null;
 
   return (
-    <div className={`chat-overlay ${fadingOut ? 'fade-out' : ''}`}>
+    <div className={`chat-overlay ${disconnecting ? 'disconnecting' : fadingOut ? 'fade-out' : ''}`}>
+      {/* Disconnect corruption overlay */}
+      {disconnecting && (
+        <div className="disconnect-corruption">
+          <div className="disconnect-corruption-static" />
+          <div className="disconnect-corruption-slices" />
+          <div className="disconnect-corruption-chroma" />
+          <div className="disconnect-text">CONNECTION SEVERED</div>
+          <div className="disconnect-flash" />
+        </div>
+      )}
+
       {/* Red void vignette background */}
       <div className="chat-void-bg" />
 
@@ -382,19 +415,17 @@ export function Chat({ isOpen, onClose }: ChatProps) {
                 </div>
               )
             ))}
-            {breachStep >= 0 && (
-              <div className="breach-progress-wrap">
-                <div className="breach-progress-track">
-                  <div
-                    className="breach-progress-bar"
-                    style={{ width: `${breachProgress * 100}%` }}
-                  />
-                </div>
-                <span className="breach-progress-pct">
-                  {Math.floor(breachProgress * 100)}%
-                </span>
+            <div className="breach-progress-wrap">
+              <div className="breach-progress-track">
+                <div
+                  className="breach-progress-bar"
+                  style={{ width: `${breachPct}%` }}
+                />
               </div>
-            )}
+              <span className="breach-progress-pct">
+                {breachPct}%
+              </span>
+            </div>
           </div>
         </div>
       )}
@@ -422,7 +453,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
                     <span style={{ color: 'rgba(255,26,26,0.3)', fontSize: '9px', letterSpacing: '3px' }}>LOADING CONSTRUCT...</span>
                   </div>
                 }>
-                  <HologramAvatar phase={avatarClass} />
+                  <HologramAvatar phase={avatarClass} isSpeaking={isSpeaking} />
                 </Suspense>
               </div>
               <div className="chat-avatar-label">
