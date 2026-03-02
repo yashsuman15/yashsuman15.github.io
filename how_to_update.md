@@ -27,6 +27,8 @@ This guide walks you through every placeholder in the project and how to replace
 19. [Favicon & Social Preview Image](#19-favicon--social-preview-image)
 20. [Deploying Your Changes](#20-deploying-your-changes)
 21. [AI Chat & Cloudflare Worker](#21-ai-chat--cloudflare-worker)
+22. [Browser Back Button & Chat History](#22-browser-back-button--chat-history)
+23. [Resume PDF](#23-resume-pdf)
 
 ---
 
@@ -84,18 +86,18 @@ This is what shows in the browser tab and search results.
 
 ## 3. Nav Logo Image
 
-The navbar logo is an image, not text. It currently loads from `public/logo.png`.
+The navbar logo is an image, not text. It currently loads from `public/logo.webp`.
 
-**File:** `src/app/components/Navigation.tsx` — **Line 5**
+**File:** `src/app/components/Navigation.tsx` — **Line 9**
 
 ```tsx
-<img src="/logo.png" alt="Logo" style={{ height: '32px' }} />
+<img src="/logo.webp" alt="Logo" style={{ height: '32px' }} />
 ```
 
 ### To change the logo:
 
-1. Replace the file `public/logo.png` with your own logo image
-2. Recommended format: PNG with transparent background, or SVG
+1. Replace the file `public/logo.webp` with your own logo image
+2. Recommended format: WebP (best compression), PNG with transparent background, or SVG
 3. Recommended size: at least 64px tall (it will be displayed at 32px height)
 4. The image auto-scales to 32px height. To adjust the size, change the `height` value:
 
@@ -196,14 +198,15 @@ The LAT/LNG coordinates and system stats on the right side. Update to your locat
 
 ## 5. Profile Photo
 
-Your profile photo is already wired up. It loads from `public/profile.png`.
+Your profile photo is already wired up. It loads from `public/profile.webp` with `loading="lazy"` (deferred loading for better performance since the image is below the fold).
 
-**File:** `src/app/components/About.tsx` — **Lines 56-64**
+**File:** `src/app/components/About.tsx` — **Lines 20-28**
 
 ```tsx
 <img
-  src="/profile.png"
+  src="/profile.webp"
   alt="Profile"
+  loading="lazy"
   style={{
     width: '100%',
     height: '100%',
@@ -214,12 +217,12 @@ Your profile photo is already wired up. It loads from `public/profile.png`.
 
 ### To change the photo:
 
-Simply replace the file `public/profile.png` with your own image. No code changes needed.
+Simply replace the file `public/profile.webp` with your own image. No code changes needed.
 
 ### Recommended image specs:
 - **Aspect ratio:** 3:4 (portrait) works best with the frame
 - **Minimum size:** 400x533px
-- **Format:** PNG or JPG
+- **Format:** WebP (best compression), PNG, or JPG
 - The cyberpunk scan line animation and corner brackets overlay on top automatically
 
 ### To adjust the image display:
@@ -501,6 +504,8 @@ export const CONTACT_LINKS: ContactLink[] = [
 ];
 ```
 
+All contact links open in a new tab (`target="_blank" rel="noopener noreferrer"`), so users don't navigate away from the portfolio.
+
 ### To remove a social link:
 
 Delete the entire `{ label, href, displayText, icon }` object from the array.
@@ -595,9 +600,22 @@ Already covered in [Section 1B](#b-the-footer-copyright--logo-text). Just update
 
 ## 16. Nav Link Targets
 
-**File:** `src/app/components/Navigation.tsx` — **Lines 7-12**
+**File:** `src/app/components/Navigation.tsx`
 
-The navigation links scroll to different sections of the page. Current mapping:
+### Navigation structure
+
+The nav bar has 4 main areas:
+
+```
+Desktop:  [logo]  [nav-links: ABOUT | SKILLS | PROJECTS | EXP | CONTACT]  [nav-actions: SEND PING | VIEW RESUME]  [hamburger (hidden)]  [WORKING status]
+Mobile:   [logo]  [nav-actions: SEND PING | VIEW RESUME]  [hamburger]
+```
+
+- **`nav-links`** — Section links. On desktop they sit in the nav bar. On mobile, they move into a **sidebar** that slides in from the right when the hamburger is tapped. A dark backdrop overlay dims the page behind the sidebar; tapping it closes the menu.
+- **`nav-actions`** — CTA buttons (SEND PING + VIEW RESUME). Always visible on both desktop and mobile. On mobile they are compact (smaller font/padding) to fit in the bar.
+- **WORKING status** — Hidden on mobile (< 768px) to save bar space.
+
+### Section links (Lines 12-16)
 
 ```tsx
 <a href="#about">// ABOUT</a>         → About/Profile section
@@ -629,7 +647,23 @@ Just change the `href` value. Available section IDs:
 // Remove a link — just delete the <a> line
 ```
 
-### To change the status text (Line 16):
+### CTA buttons (Lines 19-20)
+
+The `nav-actions` div contains two CTA buttons:
+
+```tsx
+<div className="nav-actions">
+  <a href="#contact" className="nav-cta">SEND PING</a>
+  <a href="/resume.pdf" className="nav-cta" target="_blank" rel="noopener noreferrer">VIEW RESUME</a>
+</div>
+```
+
+- **SEND PING** scrolls to the contact section
+- **VIEW RESUME** opens `public/resume.pdf` in a new tab (see [Section 23](#23-resume-pdf))
+
+To change button text or targets, edit these links directly.
+
+### To change the status text (Line 33):
 
 ```tsx
 // BEFORE
@@ -638,6 +672,13 @@ WORKING
 // AFTER (example)
 AVAILABLE FOR HIRE
 ```
+
+### Mobile sidebar styling
+
+The sidebar CSS is in `src/styles/cyberpunk.css` inside the `@media (max-width: 768px)` block. Key classes:
+- `.nav-links` — The sidebar panel (280px width, slides from right)
+- `.sidebar-backdrop` — Dark overlay behind the sidebar (click to close)
+- `.nav-actions .nav-cta` — Compact button sizing for mobile bar
 
 ---
 
@@ -745,7 +786,7 @@ If you set up a custom domain later, update:
 
 ### Favicon
 
-Currently using `public/logo.png` as the favicon. To use a proper favicon:
+Currently using `public/logo.webp` as the favicon. To use a proper favicon:
 
 1. Go to [realfavicongenerator.net](https://realfavicongenerator.net)
 2. Upload your logo
@@ -972,18 +1013,95 @@ compatibility_date = "2024-01-01"
 
 ---
 
+## 22. Browser Back Button & Chat History
+
+When a user opens the AI chat ("JACK INTO AI"), the app pushes a browser history entry. This enables two behaviors:
+
+1. **Pressing the browser back button while in chat** triggers the full "CONNECTION SEVERED" disconnect animation and returns to the main portfolio page — without replaying the boot intro.
+2. **Clicking the DISCONNECT button** (or pressing Escape) also plays the disconnect animation and cleans up the extra history entry automatically.
+
+### How it works
+
+**File:** `src/app/App.tsx`
+
+- `openChat()` calls `window.history.pushState({ chat: true }, '')` when the chat opens
+- A `popstate` event listener detects back-button presses and triggers the disconnect animation via the `triggerDisconnect` prop on `Chat`
+- `handleManualClose()` (DISCONNECT button / Escape) calls `history.back()` to pop the extra entry, with an `ignoringPopstate` ref to prevent double-trigger
+- The boot intro is **not replayed** because pressing back doesn't reload the page — React state (`bootComplete`) remains `true` in memory
+
+**File:** `src/app/components/Chat.tsx`
+
+- Accepts a `triggerDisconnect?: boolean` prop
+- A `useEffect` watches this prop and calls the internal `handleDisconnect()` function when it becomes `true`
+- This plays the full 1.35s disconnect animation, then calls `onClose()`
+
+### Boot intro persistence
+
+The boot intro uses in-memory React state. It plays once when the page first loads. It does **not** replay when:
+- Pressing browser back from chat
+- Closing the chat via DISCONNECT button
+- Navigating via in-chat section links
+
+It **does** replay when the page is fully refreshed/reloaded (browser refresh, new tab, etc.).
+
+---
+
+## 23. Resume PDF
+
+The "VIEW RESUME" button in the navigation bar opens a PDF in a new tab.
+
+### Setup
+
+Place your resume PDF at `public/resume.pdf`. The button links to `/resume.pdf` with `target="_blank"`.
+
+**File:** `src/app/components/Navigation.tsx` — **Line 20**
+
+```tsx
+<a href="/resume.pdf" className="nav-cta" target="_blank" rel="noopener noreferrer">VIEW RESUME</a>
+```
+
+### To update the resume
+
+Simply replace `public/resume.pdf` with your updated file and redeploy. No code changes needed.
+
+### To change the button text
+
+Edit the link text in `Navigation.tsx` (appears twice — once in `nav-actions` for all screens, line 20):
+
+```tsx
+// BEFORE
+VIEW RESUME
+
+// AFTER (example)
+VIEW CV
+```
+
+### To link to an external URL instead
+
+```tsx
+<a href="https://drive.google.com/your-resume-link" className="nav-cta" target="_blank" rel="noopener noreferrer">VIEW RESUME</a>
+```
+
+### To remove the button entirely
+
+Delete the `<a href="/resume.pdf" ...>VIEW RESUME</a>` line from `Navigation.tsx` (line 20).
+
+---
+
 ## Quick Reference: All Files You Need to Edit
 
 | What to update | File | How |
 |---|---|---|
 | Glitch name | `src/app/components/Hero.tsx` line 3 | Change the `NAME` constant |
-| Nav logo | `public/logo.png` | Replace the image file |
-| Nav logo size | `src/app/components/Navigation.tsx` line 5 | Change `height` value |
-| Nav link targets | `src/app/components/Navigation.tsx` lines 8-12 | Change `href` values |
-| Nav status text | `src/app/components/Navigation.tsx` line 16 | Change text |
+| Nav logo | `public/logo.webp` | Replace the image file |
+| Nav logo size | `src/app/components/Navigation.tsx` line 9 | Change `height` value |
+| Nav section links | `src/app/components/Navigation.tsx` lines 12-16 | Change `href` values |
+| Nav CTA buttons | `src/app/components/Navigation.tsx` lines 19-20 | Change text/href |
+| Nav status text | `src/app/components/Navigation.tsx` line 33 | Change text |
+| Resume PDF | `public/resume.pdf` | Replace file (linked from VIEW RESUME button) |
 | Hero tag, title, desc, stats | `src/app/components/Hero.tsx` lines 209-235 | Edit text directly |
 | Hero terminal widget | `src/app/components/Hero.tsx` lines 258-277 | Edit text directly |
-| Profile photo | `public/profile.png` | Replace the image file |
+| Profile photo | `public/profile.webp` | Replace the image file |
 | Profile photo display | `src/app/components/About.tsx` | Adjust style/objectFit |
 | About bio paragraphs | `src/data/about.ts` — BIO_PARAGRAPHS | Edit the array (auto-syncs to AI chat) |
 | Bio summary (chat) | `src/data/about.ts` — BIO_SUMMARY | Edit the string |
@@ -1002,7 +1120,7 @@ compatibility_date = "2024-01-01"
 | SEO description | `index.html` line 11 | Edit `<meta name="description">` |
 | Open Graph tags | `index.html` lines 29-34 | Edit og:title, og:description |
 | Social preview image | `public/og-image.png` | Replace file (1200x630px) |
-| Favicon | `public/logo.png` | Replace file (or add proper favicon set) |
+| Favicon | `public/logo.webp` | Replace file (or add proper favicon set) |
 | JSON-LD structured data | `index.html` lines 45-55 | Edit person schema |
 | Sitemap last modified | `public/sitemap.xml` | Update `<lastmod>` date |
 | Boot log lines | `src/data/bootLines.ts` | Edit the BOOT_LINES array |
@@ -1024,12 +1142,13 @@ compatibility_date = "2024-01-01"
 ├── index.html            ← SEO meta tags, favicon, JSON-LD, page title
 │
 ├── public/
-│   ├── logo.png          ← Nav logo + favicon image (replace this file)
-│   ├── profile.png       ← Profile photo (replace this file)
+│   ├── logo.webp         ← Nav logo + favicon image (replace this file)
+│   ├── profile.webp      ← Profile photo, lazy-loaded (replace this file)
+│   ├── resume.pdf        ← Resume PDF, opened by VIEW RESUME button (add this file)
 │   ├── og-image.png      ← Social preview image (add this, 1200x630px)
 │   ├── robots.txt        ← Search engine crawl rules
 │   ├── sitemap.xml       ← Sitemap for SEO
-│   ├── site.webmanifest  ← PWA manifest
+│   ├── site.webmanifest  ← PWA manifest (uses WebP icon)
 │   └── videos/           ← Project demo videos (add .mp4 files)
 │
 ├── serverless/
@@ -1047,12 +1166,13 @@ compatibility_date = "2024-01-01"
     │   ├── bootLines.ts         ← Boot intro terminal log messages
     │   └── quotes.ts            ← Boot intro dark AI quotes
     └── app/
+        ├── App.tsx              ← Root component: boot intro, chat open/close, browser history management
         └── components/
-            ├── Navigation.tsx   ← Nav logo, links, hamburger menu, status text
+            ├── Navigation.tsx   ← Nav logo, section links, CTA buttons (SEND PING + VIEW RESUME), sidebar menu, status
             ├── Hero.tsx         ← Glitch name, tag, title, stats, terminal
             ├── About.tsx        ← Imports bio + augmentations from data/about.ts
             ├── Contact.tsx      ← Imports links from data/contact.ts, Formspree form
-            ├── Chat.tsx         ← AI chat UI, sends portfolioContext to worker
+            ├── Chat.tsx         ← AI chat UI, sends portfolioContext to worker, supports external disconnect trigger
             ├── HologramAvatar.tsx ← 3D holographic avatar (Three.js, lazy-loaded)
             └── Footer.tsx       ← Copyright text, logo text
 ```

@@ -81,7 +81,7 @@ export function Contact() {
           </p>
           <div className="contact-links">
             {CONTACT_LINKS.map((link) => (
-              <a key={link.label} href={link.href} className="contact-link">
+              <a key={link.label} href={link.href} className="contact-link" target="_blank" rel="noopener noreferrer">
                 <span className="contact-link-icon">{link.icon}</span>
                 <span className="contact-link-text">{link.displayText}</span>
                 <span className="contact-link-label">{link.label}</span>

@@ -24,6 +24,7 @@ interface ChatMessage {
 interface ChatProps {
   isOpen: boolean;
   onClose: () => void;
+  triggerDisconnect?: boolean;
 }
 
 // ── Breach sequence lines ──
@@ -76,7 +77,7 @@ const PARTICLES = generateParticles(20);
 
 // ── Component ──
 
-export function Chat({ isOpen, onClose }: ChatProps) {
+export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp }: ChatProps) {
   const [phase, setPhase] = useState<ChatPhase>('breach');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -276,6 +277,14 @@ export function Chat({ isOpen, onClose }: ChatProps) {
       setIsSpeaking(false);
     }, 1350);
   }
+
+  // External disconnect trigger (e.g. browser back button)
+  useEffect(() => {
+    if (triggerDisconnectProp) {
+      handleDisconnect();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerDisconnectProp]);
 
   function handleNavigate(sectionId: string) {
     handleDisconnect();

@@ -6,7 +6,7 @@ export function Navigation() {
   return (
     <nav>
       <a href="#hero" className="nav-logo">
-        <img src="/logo.png" alt="Logo" style={{ height: '32px' }} />
+        <img src="/logo.webp" alt="Logo" style={{ height: '32px' }} />
       </a>
       <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
         <a href="#about" onClick={() => setMenuOpen(false)}>// ABOUT</a>
@@ -14,7 +14,10 @@ export function Navigation() {
         <a href="#showcase" onClick={() => setMenuOpen(false)}>// PROJECTS</a>
         <a href="#experience" onClick={() => setMenuOpen(false)}>// EXP</a>
         <a href="#contact" onClick={() => setMenuOpen(false)}>// CONTACT</a>
-        <a href="#contact" className="nav-cta" onClick={() => setMenuOpen(false)}>SEND PING</a>
+      </div>
+      <div className="nav-actions">
+        <a href="#contact" className="nav-cta">SEND PING</a>
+        <a href="/resume.pdf" className="nav-cta" target="_blank" rel="noopener noreferrer">VIEW RESUME</a>
       </div>
       <button
         className={`nav-toggle ${menuOpen ? 'open' : ''}`}
@@ -25,11 +28,14 @@ export function Navigation() {
         <span />
         <span />
       </button>
-      <a href="#contact" className="nav-cta nav-cta-desktop">SEND PING</a>
       <div className="nav-status">
         <div className="status-dot" />
         WORKING
       </div>
+      <div
+        className={`sidebar-backdrop ${menuOpen ? 'open' : ''}`}
+        onClick={() => setMenuOpen(false)}
+      />
     </nav>
   );
 }

@@ -18,8 +18,9 @@ export function About() {
           <div className="photo-frame">
             <div className="photo-inner">
               <img
-                src="/profile.png"
+                src="/profile.webp"
                 alt="Profile"
+                loading="lazy"
                 style={{
                   width: '100%',
                   height: '100%',

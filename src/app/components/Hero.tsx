@@ -3,7 +3,7 @@ import { GlitchButton } from './GlitchButton';
 
 const NAME = 'YASH RAJ SUMAN';
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>[]{}|\\_-=+';
-const TITLES = ['AI ENGINEER', 'COMPUTER VISION ENGINEER', 'GENAI ENGINEER'];
+const TITLES = ['AI ENGINEER', 'COMPUTER VISION ENGINEER', 'GEN-AI ENGINEER'];
 
 function randomChar() {
   return CHARS[Math.floor(Math.random() * CHARS.length)];
