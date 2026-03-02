@@ -11,7 +11,7 @@ export function Skills() {
     <section id="skills">
       <div className="section-header">
         <span className="section-num">03</span>
-        <h2 className="section-title">CHROME & CODE</h2>
+        <h2 className="section-title">SKILL DECK</h2>
         <div className="section-line" />
       </div>
       <div className="skills-grid">
