@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   ALT_INTRO_MESSAGE,
   ALT_QUESTIONS,
@@ -6,11 +6,7 @@ import {
   SECTION_MAP,
   PORTFOLIO_CONTEXT,
 } from '@/data/chatContext';
-
-// Lazy-load the 3D avatar — Three.js (~175KB gz) only fetched when Chat opens
-const HologramAvatar = lazy(() =>
-  import('./HologramAvatar').then((m) => ({ default: m.HologramAvatar }))
-);
+import { AltWaveform } from './AltWaveform';
 
 // ── Types ──
 
@@ -457,14 +453,8 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
           <div className="chat-main">
             {/* Avatar sidebar — 3D holographic avatar */}
             <div className="chat-avatar-panel">
-              <div className="chat-avatar-3d">
-                <Suspense fallback={
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ color: 'rgba(255,26,26,0.3)', fontSize: '9px', letterSpacing: '3px' }}>LOADING CONSTRUCT...</span>
-                  </div>
-                }>
-                  <HologramAvatar phase={avatarClass} isSpeaking={isSpeaking} />
-                </Suspense>
+              <div className="chat-avatar-waveform">
+                <AltWaveform phase={avatarClass} isSpeaking={isSpeaking} />
               </div>
               <div className="chat-avatar-label">
                 CONSTRUCT // ACTIVE
@@ -477,7 +467,9 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
             <div className="chat-content">
               {/* Mobile-only compact avatar banner (visible when sidebar is hidden) */}
               <div className="chat-mobile-avatar">
-                <div className="chat-mobile-avatar-icon" />
+                <div className="chat-mobile-avatar-waveform">
+                  <AltWaveform phase={avatarClass} isSpeaking={isSpeaking} compact />
+                </div>
                 <div className="chat-mobile-avatar-info">
                   <span className="chat-mobile-avatar-name">ALT_CUNNINGHAM</span>
                   <span className="chat-mobile-avatar-status">CONSTRUCT // ACTIVE // BEYOND BLACKWALL</span>
