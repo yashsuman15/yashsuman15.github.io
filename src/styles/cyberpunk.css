@@ -1461,23 +1461,115 @@ nav::before {
   min-width: 160px;
 }
 
-/* Social platform stats block — color driven by var(--social-color) */
+/* Social platform stats — premium metallic glow, color driven by var(--social-color) */
+
+/* Subtle breathing edge glow — reduced, single layer */
+@keyframes social-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 6px color-mix(in srgb, var(--social-color) 6%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 10px color-mix(in srgb, var(--social-color) 12%, transparent);
+  }
+}
+
+/* Outer wrapper — carries subtle glow (clip-path on inner clips box-shadow) */
+.showcase-social-wrap {
+  position: relative;
+  animation: social-glow-pulse 3s ease-in-out infinite;
+  transition: box-shadow 0.3s;
+}
+
+.showcase-social-wrap:hover {
+  box-shadow: 0 0 12px color-mix(in srgb, var(--social-color) 18%, transparent);
+  animation-play-state: paused;
+}
+
+/* Diagonal light sweep across block */
+@keyframes social-shine-sweep {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Inner link — metallic brushed-metal gradient + animated shine */
 .showcase-social {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
   text-decoration: none;
   padding: 14px 20px;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--social-color) 12%, transparent) 0%,
+      color-mix(in srgb, var(--social-color) 6%, transparent) 25%,
+      color-mix(in srgb, var(--social-color) 3%, transparent) 40%,
+      color-mix(in srgb, var(--social-color) 14%, rgba(255, 255, 255, 0.04)) 50%,
+      color-mix(in srgb, var(--social-color) 4%, transparent) 60%,
+      color-mix(in srgb, var(--social-color) 8%, transparent) 80%,
+      color-mix(in srgb, var(--social-color) 14%, transparent) 100%
+    );
   border: 1px solid color-mix(in srgb, var(--social-color) 30%, transparent);
+  border-top-color: color-mix(in srgb, var(--social-color) 18%, rgba(255, 255, 255, 0.1));
+  border-bottom-color: color-mix(in srgb, var(--social-color) 10%, transparent);
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   transition: all 0.3s;
+  overflow: hidden;
 }
 
-.showcase-social:hover {
-  background: color-mix(in srgb, var(--social-color) 8%, transparent);
-  border-color: color-mix(in srgb, var(--social-color) 60%, transparent);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--social-color) 12%, transparent);
+/* Moving diagonal light band */
+.showcase-social::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 40%,
+      color-mix(in srgb, var(--social-color) 12%, rgba(255, 255, 255, 0.06)) 46%,
+      color-mix(in srgb, var(--social-color) 18%, rgba(255, 255, 255, 0.10)) 50%,
+      color-mix(in srgb, var(--social-color) 12%, rgba(255, 255, 255, 0.06)) 54%,
+      transparent 60%,
+      transparent 100%
+    );
+  background-size: 200% 100%;
+  animation: social-shine-sweep 4s ease-in-out infinite;
+  pointer-events: none;
+  clip-path: inherit;
+}
+
+.showcase-social-wrap:hover .showcase-social {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--social-color) 18%, transparent) 0%,
+      color-mix(in srgb, var(--social-color) 10%, transparent) 25%,
+      color-mix(in srgb, var(--social-color) 5%, transparent) 40%,
+      color-mix(in srgb, var(--social-color) 20%, rgba(255, 255, 255, 0.07)) 50%,
+      color-mix(in srgb, var(--social-color) 7%, transparent) 60%,
+      color-mix(in srgb, var(--social-color) 12%, transparent) 80%,
+      color-mix(in srgb, var(--social-color) 20%, transparent) 100%
+    );
+  border-color: color-mix(in srgb, var(--social-color) 50%, transparent);
+  border-top-color: color-mix(in srgb, var(--social-color) 30%, rgba(255, 255, 255, 0.15));
+}
+
+.showcase-social-wrap:hover .showcase-social::after {
+  background:
+    linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 40%,
+      color-mix(in srgb, var(--social-color) 18%, rgba(255, 255, 255, 0.09)) 46%,
+      color-mix(in srgb, var(--social-color) 25%, rgba(255, 255, 255, 0.14)) 50%,
+      color-mix(in srgb, var(--social-color) 18%, rgba(255, 255, 255, 0.09)) 54%,
+      transparent 60%,
+      transparent 100%
+    );
+  background-size: 200% 100%;
 }
 
 .social-stats {
@@ -1489,56 +1581,97 @@ nav::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .social-stat-top {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: baseline;
+  gap: 5px;
 }
 
+/* Icon — supporting role, smaller + tinted */
 .social-stat-icon {
+  font-size: 12px;
   color: var(--social-color);
-  font-size: 11px;
+  opacity: 0.7;
+  transition: opacity 0.3s;
 }
 
+/* Number — primary focal point, large bright white with colored glow */
 .social-stat-num {
   font-family: 'Orbitron', monospace;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 700;
-  color: var(--social-color);
   letter-spacing: 1px;
+  color: #fff;
+  text-shadow:
+    0 0 10px color-mix(in srgb, var(--social-color) 50%, transparent),
+    0 0 24px color-mix(in srgb, var(--social-color) 20%, transparent);
+  transition: text-shadow 0.3s, color 0.3s;
 }
 
+/* Label — secondary, readable but clearly subordinate */
 .social-stat-label {
-  font-family: 'Orbitron', monospace;
-  font-size: 7px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--social-color) 45%, transparent);
+  color: color-mix(in srgb, var(--social-color) 55%, transparent);
   transition: color 0.3s;
 }
 
-.showcase-social:hover .social-stat-label {
-  color: color-mix(in srgb, var(--social-color) 70%, transparent);
+.showcase-social-wrap:hover .social-stat-label {
+  color: color-mix(in srgb, var(--social-color) 80%, transparent);
 }
 
-.showcase-social:hover .social-stat-num {
-  filter: brightness(1.2);
-  text-shadow: 0 0 8px color-mix(in srgb, var(--social-color) 40%, transparent);
+.showcase-social-wrap:hover .social-stat-icon {
+  opacity: 1;
 }
 
+.showcase-social-wrap:hover .social-stat-num {
+  color: #fff;
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--social-color) 65%, transparent),
+    0 0 32px color-mix(in srgb, var(--social-color) 30%, transparent);
+}
+
+/* Platform badge — top of block, immediately identifies the source */
+.social-platform-badge {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--social-color);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--social-color) 40%, transparent);
+  padding-bottom: 8px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid color-mix(in srgb, var(--social-color) 20%, transparent);
+  width: 100%;
+  text-align: right;
+  transition: text-shadow 0.3s, color 0.3s;
+}
+
+.showcase-social-wrap:hover .social-platform-badge {
+  color: color-mix(in srgb, var(--social-color) 80%, white);
+  text-shadow:
+    0 0 12px color-mix(in srgb, var(--social-color) 55%, transparent),
+    0 0 28px color-mix(in srgb, var(--social-color) 20%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--social-color) 40%, transparent);
+}
+
+/* CTA link — tertiary, subtle */
 .social-label {
   font-family: 'Orbitron', monospace;
   font-size: 9px;
   letter-spacing: 3px;
   color: color-mix(in srgb, var(--social-color) 50%, transparent);
-  transition: color 0.3s;
+  transition: color 0.3s, text-shadow 0.3s;
 }
 
-.showcase-social:hover .social-label {
-  color: color-mix(in srgb, var(--social-color) 85%, transparent);
+.showcase-social-wrap:hover .social-label {
+  color: color-mix(in srgb, var(--social-color) 80%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--social-color) 25%, transparent);
 }
 
 /* GitHub link */
@@ -3434,6 +3567,10 @@ footer {
     min-width: unset;
   }
 
+  .showcase-social-wrap {
+    align-self: flex-start;
+  }
+
   .showcase-social {
     align-items: flex-start;
     padding: 12px 16px;
@@ -3444,7 +3581,17 @@ footer {
   }
 
   .social-stat-num {
-    font-size: 12px;
+    font-size: 16px;
+  }
+
+  .social-stat-icon {
+    font-size: 10px;
+  }
+
+  .social-platform-badge {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-align: left;
   }
 
   .social-label {

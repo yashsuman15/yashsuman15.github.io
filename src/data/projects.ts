@@ -55,8 +55,8 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       platform: 'youtube',
       url: 'https://youtu.be/kwQeokYDVcE?si=K5J-aZQqUHS2Qk0V',
       metrics: [
-        { icon: '\u25B2', value: 2050, label: 'views' },
-        { icon: '\u25C9', value: 64, label: 'likes' },
+        { icon: '\u25B2', value: 2000, label: 'views' },
+        { icon: '\u25C9', value: 60, label: 'likes' },
         // { icon: '\u2197', value: 0, label: 'comments' },
       ],
     },
@@ -83,8 +83,8 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       url: 'https://www.reddit.com/r/computervision/comments/1q27p8e/real_time_assembly_line_quality_inspection_using/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
       metrics: [
         { icon: '\u25C9', value: 45000, label: 'views' },
-        { icon: '\u25B2', value: 402, label: 'upvotes' },
-        { icon: '\u2197', value: 256, label: 'shares' },
+        { icon: '\u25B2', value: 400, label: 'upvotes' },
+        { icon: '\u2197', value: 260, label: 'shares' },
       ],
     },
     githubLink:
@@ -112,8 +112,8 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       url: 'https://www.reddit.com/r/computervision/comments/1p8u9mw/real_time_vehicle_and_parking_occupancy_detection/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
       metrics: [
         { icon: '\u25C9', value: 127000, label: 'views' },
-        { icon: '\u25B2', value: 744, label: 'upvotes' },
-        { icon: '\u2197', value: 336, label: 'shares' },
+        { icon: '\u25B2', value: 750, label: 'upvotes' },
+        { icon: '\u2197', value: 340, label: 'shares' },
       ],
     },
     githubLink:
@@ -141,8 +141,8 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       url: 'https://www.reddit.com/r/computervision/comments/1opsts3/automating_pill_counting_using_a_finetuned/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
       metrics: [
         { icon: '\u25C9', value: 60000, label: 'views' },
-        { icon: '\u25B2', value: 447, label: 'upvotes' },
-        { icon: '\u2197', value: 188, label: 'shares' },
+        { icon: '\u25B2', value: 450, label: 'upvotes' },
+        { icon: '\u2197', value: 190, label: 'shares' },
       ],
     },
     githubLink:
@@ -170,8 +170,8 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       url: 'https://www.reddit.com/r/computervision/comments/1pqf803/perimeter_sensing_and_interaction_detection_using/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
       metrics: [
         { icon: '\u25C9', value: 86000, label: 'views' },
-        { icon: '\u25B2', value: 126, label: 'upvotes' },
-        { icon: '\u2197', value: 52, label: 'shares' },
+        { icon: '\u25B2', value: 130, label: 'upvotes' },
+        { icon: '\u2197', value: 50, label: 'shares' },
       ],
     },
     githubLink:
@@ -201,7 +201,7 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       metrics: [
         { icon: '\u25C9', value: 31000, label: 'views' },
         { icon: '\u25B2', value: 200, label: 'upvotes' },
-        { icon: '\u2197', value: 92, label: 'shares' },
+        { icon: '\u2197', value: 90, label: 'shares' },
       ],
     },
     githubLink:
@@ -230,7 +230,7 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       metrics: [
         { icon: '\u25C9', value: 42000, label: 'views' },
         { icon: '\u25B2', value: 450, label: 'upvotes' },
-        { icon: '\u2197', value: 214, label: 'shares' },
+        { icon: '\u2197', value: 220, label: 'shares' },
       ],
     },
     githubLink:

@@ -10,11 +10,10 @@ const PLATFORM_CONFIG: Record<string, { color: string; label: string }> = {
   producthunt: { color: '#DA552F', label: 'PRODUCT HUNT' },
 };
 
-/** Format numbers with K suffix: 1200 → "1.2K", 342 → "342" */
+/** Format numbers: full digits with commas + "+" for non-zero (12400 → "12,400+", 0 → "0") */
 function formatNum(n: number): string {
-  if (n >= 10000) return `${(n / 1000).toFixed(1)}K`;
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-  return String(n);
+  if (n === 0) return '0';
+  return n.toLocaleString() + '+';
 }
 
 export function Showcase() {
@@ -175,26 +174,31 @@ export function Showcase() {
                   const config = PLATFORM_CONFIG[project.social.platform];
                   if (!config) return null;
                   return (
-                    <a
-                      href={project.social.url}
-                      className="showcase-social"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <div
+                      className="showcase-social-wrap"
                       style={{ '--social-color': config.color } as React.CSSProperties}
                     >
-                      <div className="social-stats">
-                        {project.social.metrics.map((m) => (
-                          <span className="social-stat" key={m.label}>
-                            <span className="social-stat-top">
-                              <span className="social-stat-icon">{m.icon}</span>
-                              <span className="social-stat-num">{formatNum(m.value)}</span>
+                      <a
+                        href={project.social.url}
+                        className="showcase-social"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span className="social-platform-badge">{config.label}</span>
+                        <div className="social-stats">
+                          {project.social.metrics.map((m) => (
+                            <span className="social-stat" key={m.label}>
+                              <span className="social-stat-top">
+                                <span className="social-stat-icon">{m.icon}</span>
+                                <span className="social-stat-num">{formatNum(m.value)}</span>
+                              </span>
+                              <span className="social-stat-label">{m.label}</span>
                             </span>
-                            <span className="social-stat-label">{m.label}</span>
-                          </span>
-                        ))}
-                      </div>
-                      <span className="social-label">VIEW ON {config.label} {'\u2192'}</span>
-                    </a>
+                          ))}
+                        </div>
+                        <span className="social-label">VIEW ON {config.label} {'\u2192'}</span>
+                      </a>
+                    </div>
                   );
                 })()}
                 <a
