@@ -1,6 +1,22 @@
 import { useEffect, useRef } from 'react';
 import { SHOWCASE_PROJECTS } from '@/data/projects';
 
+/** Platform brand colors and display labels — add a line here to support a new platform */
+const PLATFORM_CONFIG: Record<string, { color: string; label: string }> = {
+  reddit:      { color: '#FF4500', label: 'REDDIT' },
+  linkedin:    { color: '#0A66C2', label: 'LINKEDIN' },
+  youtube:     { color: '#FF0000', label: 'YOUTUBE' },
+  twitter:     { color: '#1DA1F2', label: 'X' },
+  producthunt: { color: '#DA552F', label: 'PRODUCT HUNT' },
+};
+
+/** Format numbers with K suffix: 1200 → "1.2K", 342 → "342" */
+function formatNum(n: number): string {
+  if (n >= 10000) return `${(n / 1000).toFixed(1)}K`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+  return String(n);
+}
+
 export function Showcase() {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -123,15 +139,9 @@ export function Showcase() {
                 </div>
               )}
               {project.videoSrc && (
-                <>
-                  <div className="video-playing-badge">
-                    <div className="live-dot" />
-                    LIVE DEMO
-                  </div>
-                  <div className="video-pause-hint">
-                    <span>{'\u23F8'} PAUSE</span>
-                  </div>
-                </>
+                <div className="video-pause-hint">
+                  <span>{'\u23F8'} PAUSE</span>
+                </div>
               )}
             </div>
 
@@ -161,10 +171,38 @@ export function Showcase() {
                 </div>
               </div>
               <div className="showcase-cta">
-                <a href={project.caseLink} className="showcase-link">
-                  CASE FILE {'\u2192'}
-                </a>
-                <a href={project.githubLink} className="showcase-link secondary">
+                {project.social && (() => {
+                  const config = PLATFORM_CONFIG[project.social.platform];
+                  if (!config) return null;
+                  return (
+                    <a
+                      href={project.social.url}
+                      className="showcase-social"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ '--social-color': config.color } as React.CSSProperties}
+                    >
+                      <div className="social-stats">
+                        {project.social.metrics.map((m) => (
+                          <span className="social-stat" key={m.label}>
+                            <span className="social-stat-top">
+                              <span className="social-stat-icon">{m.icon}</span>
+                              <span className="social-stat-num">{formatNum(m.value)}</span>
+                            </span>
+                            <span className="social-stat-label">{m.label}</span>
+                          </span>
+                        ))}
+                      </div>
+                      <span className="social-label">VIEW ON {config.label} {'\u2192'}</span>
+                    </a>
+                  );
+                })()}
+                <a
+                  href={project.githubLink}
+                  className="showcase-link secondary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   // GITHUB
                 </a>
               </div>

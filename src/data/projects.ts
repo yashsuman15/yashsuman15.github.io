@@ -1,3 +1,15 @@
+export interface SocialMetric {
+  icon: string;      // Unicode char: '▲', '◉', '↗', '👍', '💬', '▶', etc.
+  value: number;     // Auto-formatted: 12400 → "12.4K"
+  label: string;     // Accessibility: 'upvotes', 'views', 'shares', etc.
+}
+
+export interface ProjectSocial {
+  platform: string;           // 'reddit' | 'linkedin' | 'youtube' | 'twitter' | 'producthunt'
+  url: string;                // Link to the post (opens in new tab)
+  metrics: SocialMetric[];    // Flexible stats array
+}
+
 export interface ShowcaseProject {
   index: string;
   title: string;
@@ -7,7 +19,7 @@ export interface ShowcaseProject {
   insightHighlight: string;
   tags: { label: string; color: 'yellow' | 'cyan' | 'purple' }[];
   videoSrc: string;
-  caseLink: string;
+  social?: ProjectSocial;     // Optional — one platform per project
   githubLink: string;
 }
 
@@ -21,88 +33,209 @@ export interface CompletedGig {
 export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
   {
     index: '// PROJECT_01',
-    title: 'NEUROMANCER-7',
-    subtitle: 'Autonomous LLM Agent for Corporate Threat Detection',
+    title: 'GHOST SIGHT',
+    subtitle: 'Detects Intrusions. Flags Anomalies. Keeps the Perimeter Safe.',
     description:
-      "340M parameter custom transformer architecture trained on Night City's dark net feeds. Detects corporate espionage vectors in real-time across encrypted comms, internal docs, and behavioral telemetry \u2014 before the corps even know they're compromised.",
+      'Custom-trained Vision pipeline for detecting unauthorized zone entry across live camera feeds. Fine-tuned on domain-specific intrusion datasets to handle occlusion, low-light conditions, and multi-person scenes — achieving production-ready accuracy without a full dataset retraining cycle.',
     insight:
-      'pushed detection accuracy to 99.2% while cutting false positives by 67% \u2014 making it deployable in live corpo environments without triggering security alerts.',
-    insightHighlight: 'Fine-tuning with adversarially generated red-team data',
+      'fine-tuned for every targeted intrusion scenario like night-time, low-light, multi-person, achieving high-precision zone breach detection with minimal false positives — outperforming generic object detectors in restricted-area surveillance scenarios.',
+    insightHighlight: 'Domain-specific CV fine-tuning pipeline',
     tags: [
+      { label: 'YOLO', color: 'yellow' },
+      { label: 'RTDETR', color: 'cyan' },
+      { label: 'OpenCV', color: 'purple' },
+      { label: 'SAM3', color: 'cyan' },
+      { label: 'Python', color: 'cyan' },
+      { label: 'Custom Dataset', color: 'purple' },
+      { label: 'Fine-Tuning', color: 'yellow' },
       { label: 'PyTorch', color: 'yellow' },
-      { label: 'LangChain', color: 'purple' },
-      { label: 'CUDA Kernels', color: 'cyan' },
-      { label: 'Transformers', color: 'purple' },
-      { label: 'RLHF', color: 'yellow' },
-      { label: 'vLLM', color: 'purple' },
     ],
     videoSrc: '/videos/intrusion_detection_compressed.mp4',
-    caseLink: '#',
-    githubLink: '#',
+    social: {
+      platform: 'youtube',
+      url: 'https://youtu.be/kwQeokYDVcE?si=K5J-aZQqUHS2Qk0V',
+      metrics: [
+        { icon: '\u25B2', value: 2050, label: 'views' },
+        { icon: '\u25C9', value: 64, label: 'likes' },
+        // { icon: '\u2197', value: 0, label: 'comments' },
+      ],
+    },
+    githubLink: 'https://github.com/Labellerr/Hands-On-Learning-in-Computer-Vision/blob/main/fine-tune%20YOLO%20for%20various%20use%20cases/Intrusion_detection_using_YOLO.ipynb',
   },
   {
     index: '// PROJECT_02',
-    title: 'GHOST SIGHT',
-    subtitle: 'Real-Time Person Re-Identification Across 4,000+ Nodes',
+    title: 'FLAW SCAN',
+    subtitle: 'Scans Every Unit. Flags Every Flaw. Zero Defects Ship.',
     description:
-      "Edge-deployed computer vision system running across Night City's surveillance mesh. Identifies targets across camera cuts, lighting shifts, and deliberate disguise attempts \u2014 zero cloud dependency, 60fps on embedded hardware.",
+      'Vision pipeline deployed on a bottle manufacturing line to verify cap attachment and label alignment in real time. Draws a custom Quality Inspection Zone per camera feed, then runs spatial IoU checks to make instant pass/fail calls on every unit — no human in the loop required.',
     insight:
-      'reduced model size by 78% with only 1.2% accuracy loss \u2014 making sub-20ms inference on embedded GPUs viable at city scale for the first time.',
-    insightHighlight: 'Custom TensorRT quantization pipeline',
+      'combined RTDETR instance segmentation with geometric IoU verification inside a user-defined inspection zone — turning a general-purpose model into a precision QC system that catches misaligned caps and missing labels before they leave the line.',
+    insightHighlight: 'Segmentation + spatial IoU for pass/fail QC',
     tags: [
-      { label: 'YOLOv9', color: 'yellow' },
-      { label: 'TensorRT', color: 'cyan' },
+      { label: 'RTDETR', color: 'yellow' },
       { label: 'OpenCV', color: 'purple' },
-      { label: 'ReID Models', color: 'purple' },
-      { label: 'ONNX', color: 'yellow' },
-      { label: 'Edge Deploy', color: 'purple' },
+      { label: 'PyTorch', color: 'yellow' },
+      { label: 'Python', color: 'cyan' },
     ],
-    videoSrc: '',
-    caseLink: '#',
-    githubLink: '#',
+    videoSrc: '/videos/assembly_line_quality_inspection_compressed.mp4',
+    social: {
+      platform: 'reddit',
+      url: 'https://www.reddit.com/r/computervision/comments/1q27p8e/real_time_assembly_line_quality_inspection_using/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
+      metrics: [
+        { icon: '\u25C9', value: 45000, label: 'views' },
+        { icon: '\u25B2', value: 402, label: 'upvotes' },
+        { icon: '\u2197', value: 256, label: 'shares' },
+      ],
+    },
+    githubLink:
+      'https://github.com/Labellerr/Hands-On-Learning-in-Computer-Vision/blob/main/fine-tune%20YOLO%20for%20various%20use%20cases/assembly_line_inspection.ipynb',
   },
   {
     index: '// PROJECT_03',
-    title: 'NETWATCH SHIELD',
-    subtitle: 'LLM-Powered Zero-Day Threat Intelligence Engine',
+    title: 'PARKING LOT VISION',
+    subtitle: 'Knows Every Parking Spot. Occupied or Empty. In Real Time.',
     description:
-      'RAG-augmented threat intel system ingesting 2TB of dark net traffic, exploit forums, and comms daily. Surfaces zero-day alerts hours before public CVE disclosure. Built for three megacorps with 99.99% uptime SLA.',
+      'Computer vision system that monitors parking lots from overhead camera feeds, classifying every individual space as occupied or vacant in real time. Processes the full lot in a single pass — giving drivers, operators, and smart city systems live availability without sensors or manual checks.',
     insight:
-      'cut false alert rate by 81% \u2014 the difference between security teams acting on real threats versus drowning in noise.',
-    insightHighlight: 'Combining semantic chunking with hybrid BM25 + vector retrieval',
+      'trained on a custom parking dataset with COCO-to-YOLO conversion pipeline, achieving reliable slot-level occupancy classification across varying lighting, vehicle sizes, and lot layouts — no per-lot recalibration needed.',
+    insightHighlight: 'Per-slot occupancy classification at lot scale',
     tags: [
-      { label: 'RAG', color: 'purple' },
-      { label: 'Elasticsearch', color: 'cyan' },
-      { label: 'Kafka', color: 'yellow' },
-      { label: 'LangChain', color: 'purple' },
-      { label: 'FastAPI', color: 'purple' },
-      { label: 'pgvector', color: 'cyan' },
+      { label: 'RTDETRv2', color: 'yellow' },
+      { label: 'PyTorch', color: 'yellow' },
+      { label: 'OpenCV', color: 'purple' },
+      { label: 'Python', color: 'cyan' },
+      { label: 'Real-Time Inference', color: 'purple' },
     ],
-    videoSrc: '',
-    caseLink: '#',
-    githubLink: '#',
+    videoSrc: '/videos/parking lot_compressed.mp4',
+    social: {
+      platform: 'reddit',
+      url: 'https://www.reddit.com/r/computervision/comments/1p8u9mw/real_time_vehicle_and_parking_occupancy_detection/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
+      metrics: [
+        { icon: '\u25C9', value: 127000, label: 'views' },
+        { icon: '\u25B2', value: 744, label: 'upvotes' },
+        { icon: '\u2197', value: 336, label: 'shares' },
+      ],
+    },
+    githubLink:
+      'https://github.com/Labellerr/Hands-On-Learning-in-Computer-Vision/blob/main/fine-tune%20YOLO%20for%20various%20use%20cases/Fine-Tune-YOLO-for-Parking-Space-Monitoring.ipynb',
   },
   {
     index: '// PROJECT_04',
-    title: 'CORPUS CHROMI',
-    subtitle: 'Multimodal Synthetic Data Generation Platform',
+    title: 'PILL COUNT',
+    subtitle: 'Detects Every Tablet. Counts the Pile. Flags What\'s Off.',
     description:
-      'Generative pipeline producing photorealistic synthetic training data for computer vision models. Reduced annotation costs by 60% for three corps. Outputs pass automated quality checks and real-distribution statistics tests \u2014 indistinguishable from real captures.',
+      'Vision pipeline built for pharmaceutical packaging lines that detects, segments, and counts individual pills in real time — including overlapping and partially visible tablets. Goes beyond simple counting to flag broken, chipped, discolored, or contaminated units before they leave the line.',
     insight:
-      'ensured synthetic images matched real distribution statistics \u2014 so models trained on synthetic data generalized to production with zero fine-tuning penalty.',
-    insightHighlight: 'Pairing domain-randomized diffusion with CLIP-guided filtering',
+      'used YOLOv12-seg instance segmentation with a COCO-to-YOLO conversion pipeline to handle overlapping pills accurately — turning a traditionally error-prone manual count into a zero-miss automated QC checkpoint at line speed.',
+    insightHighlight: 'YOLOv12 segmentation for overlap-tolerant pill counting',
     tags: [
-      { label: 'Stable Diffusion', color: 'yellow' },
-      { label: 'CLIP', color: 'cyan' },
-      { label: 'ControlNet', color: 'purple' },
-      { label: 'VAE', color: 'purple' },
-      { label: 'Ray', color: 'yellow' },
-      { label: 'Kubernetes', color: 'cyan' },
+      { label: 'YOLOv12', color: 'yellow' },
+      { label: 'OpenCV', color: 'purple' },
+      { label: 'PyTorch', color: 'yellow' },
+      { label: 'Real-Time QC', color: 'purple' },
+      { label: 'Python', color: 'cyan' },
     ],
-    videoSrc: '',
-    caseLink: '#',
-    githubLink: '#',
+    videoSrc: '/videos/counted_pills_full_compressed.mp4',
+    social: {
+      platform: 'reddit',
+      url: 'https://www.reddit.com/r/computervision/comments/1opsts3/automating_pill_counting_using_a_finetuned/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
+      metrics: [
+        { icon: '\u25C9', value: 60000, label: 'views' },
+        { icon: '\u25B2', value: 447, label: 'upvotes' },
+        { icon: '\u2197', value: 188, label: 'shares' },
+      ],
+    },
+    githubLink:
+      'https://github.com/Labellerr/Hands-On-Learning-in-Computer-Vision/blob/main/fine-tune%20YOLO%20for%20various%20use%20cases/Pill_Counting_Using_YOLOv12.ipynb',
   },
+  {
+    index: '// PROJECT_05',
+    title: 'ZONE AWARE',
+    subtitle: 'Spatial Awareness at Camera Level. No Sensor Required.',
+    description:
+      'Computer vision system that defines custom virtual perimeters on any camera feed and triggers instant alerts the moment a person or object crosses into a restricted zone. Goes beyond motion detection — understands object context, trajectory, and zone interaction to eliminate false positives from shadows, lighting shifts, or irrelevant movement.',
+    insight:
+      'built a polygon-based virtual zone engine on top of YOLO detection — combining bounding box centroids with custom boundary logic to distinguish a genuine perimeter breach from ambient scene noise with near-zero false trigger rate.',
+    insightHighlight: 'Polygon zone engine with centroid boundary logic',
+    tags: [
+      { label: 'YOLOv8', color: 'yellow' },
+      { label: 'OpenCV', color: 'purple' },
+      { label: 'PyTorch', color: 'yellow' },
+      { label: 'Real-Time Alerts', color: 'purple' },
+      { label: 'Python', color: 'cyan' },
+    ],
+    videoSrc: '/videos/perimeter_sensing_compressed.mp4',
+    social: {
+      platform: 'reddit',
+      url: 'https://www.reddit.com/r/computervision/comments/1pqf803/perimeter_sensing_and_interaction_detection_using/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
+      metrics: [
+        { icon: '\u25C9', value: 86000, label: 'views' },
+        { icon: '\u25B2', value: 126, label: 'upvotes' },
+        { icon: '\u2197', value: 52, label: 'shares' },
+      ],
+    },
+    githubLink:
+      'https://github.com/Labellerr/Hands-On-Learning-in-Computer-Vision/blob/main/fine-tune%20YOLO%20for%20various%20use%20cases/perimeter_sensing_using_yolo.ipynb',
+  },
+  {
+    index: '// PROJECT_06',
+    title: 'TRAFFIC FLOW STATE',
+    subtitle: 'Reads the Road. Counts Every Vehicle. Maps the Flow.',
+    description:
+      'Vision pipeline that monitors live road footage to detect, classify, and count vehicles in real time — tracking flow direction, volume per lane, and congestion buildup across an entire intersection or highway segment. Turns raw camera feeds into structured traffic intelligence without any roadside sensors or infrastructure changes.',
+    insight:
+      'combined Computer Vision in vehicle detection with a virtual tripwire counting layer and per-class vehicle tracking — logging directional flow counts for cars, trucks, buses, and bikes independently, producing per-lane throughput data usable directly by traffic management systems.',
+    insightHighlight: 'Per-class directional counting',
+    tags: [
+      { label: 'YOLO', color: 'yellow' },
+      { label: 'OpenCV', color: 'purple' },
+      { label: 'PyTorch', color: 'yellow' },
+      { label: 'Object Tracking', color: 'yellow' },
+      { label: 'Real-Time Inference', color: 'yellow' },
+      { label: 'Python', color: 'cyan' },
+    ],
+    videoSrc: '/videos/traffic management_compressed.mp4',
+    social: {
+      platform: 'reddit',
+      url: 'https://www.reddit.com/r/computervision/comments/1ojx3tr/realtime_vehicle_flow_counting_using_a_single/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
+      metrics: [
+        { icon: '\u25C9', value: 31000, label: 'views' },
+        { icon: '\u25B2', value: 200, label: 'upvotes' },
+        { icon: '\u2197', value: 92, label: 'shares' },
+      ],
+    },
+    githubLink:
+      'https://github.com/Labellerr/Hands-On-Learning-in-Computer-Vision/blob/main/fine-tune%20YOLO%20for%20various%20use%20cases/Fine-Tune-YOLO-for-Traffic-Flow-Counting.ipynb',
+  },
+  {
+    index: '// PROJECT_07',
+    title: 'CONVEYOR VISION',
+    subtitle: 'Every Items on the Belt. Detected, Classified & Counted.',
+    description:
+      'Vision pipeline mounted above a produce conveyor that detects and counts individual items in real time as they move through the line — classifying by type, and maintaining a live tally per SKU. Replaces manual counting entirely with a camera-only solution that keeps pace with the belt at full production speed.',
+    insight:
+      'built a moving-object instance counter on top of Object Detection — using centroid tracking with a virtual counting line to handle overlapping and fast-moving items accurately, producing per-class counts without double-counting items that briefly overlap or cluster on the belt.',
+    insightHighlight: 'Centroid tracking with virtual line counting for moving items',
+    tags: [
+      { label: 'RTDETRv2', color: 'yellow' },
+      { label: 'OpenCV', color: 'purple' },
+      { label: 'PyTorch', color: 'yellow' },
+      { label: 'Real-Time Inference', color: 'cyan' },
+      { label: 'Python', color: 'cyan' },
+    ],
+    videoSrc: '/videos/fruits_counting_on_conveyor_belt_compressed.mp4',
+    social: {
+      platform: 'reddit',
+      url: 'https://www.reddit.com/r/computervision/comments/1q85vdq/real_time_fruit_counting_on_a_conveyor_belt_fine/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button',
+      metrics: [
+        { icon: '\u25C9', value: 42000, label: 'views' },
+        { icon: '\u25B2', value: 450, label: 'upvotes' },
+        { icon: '\u2197', value: 214, label: 'shares' },
+      ],
+    },
+    githubLink:
+      'https://github.com/Labellerr/Hands-On-Learning-in-Computer-Vision/blob/main/fine-tune%20YOLO%20for%20various%20use%20cases/fruits_counting_on_conveyor.ipynb',
+  }
 ];
 
 export const COMPLETED_GIGS: CompletedGig[] = [

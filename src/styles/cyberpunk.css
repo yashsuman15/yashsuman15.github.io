@@ -1293,41 +1293,6 @@ nav::before {
   border: 1px solid rgba(252, 227, 0, 0.2);
 }
 
-.video-playing-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 3px;
-  color: var(--cyan);
-  background: rgba(5, 5, 8, 0.88);
-  padding: 6px 12px;
-  border: 1px solid rgba(0, 245, 255, 0.3);
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: all .3s;
-  pointer-events: none;
-}
-
-.video-playing-badge .live-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--pink);
-  border-radius: 50%;
-  animation: pulse 1s infinite;
-  flex-shrink: 0;
-}
-
-.showcase-video-pane.is-playing .video-playing-badge {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .video-pause-hint {
   position: absolute;
   inset: 0;
@@ -1496,33 +1461,101 @@ nav::before {
   min-width: 160px;
 }
 
-.showcase-link {
+/* Social platform stats block — color driven by var(--social-color) */
+.showcase-social {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  text-decoration: none;
+  padding: 14px 20px;
+  border: 1px solid color-mix(in srgb, var(--social-color) 30%, transparent);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition: all 0.3s;
+}
+
+.showcase-social:hover {
+  background: color-mix(in srgb, var(--social-color) 8%, transparent);
+  border-color: color-mix(in srgb, var(--social-color) 60%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--social-color) 12%, transparent);
+}
+
+.social-stats {
+  display: flex;
+  gap: 18px;
+}
+
+.social-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.social-stat-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.social-stat-icon {
+  color: var(--social-color);
+  font-size: 11px;
+}
+
+.social-stat-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--social-color);
+  letter-spacing: 1px;
+}
+
+.social-stat-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 7px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--social-color) 45%, transparent);
+  transition: color 0.3s;
+}
+
+.showcase-social:hover .social-stat-label {
+  color: color-mix(in srgb, var(--social-color) 70%, transparent);
+}
+
+.showcase-social:hover .social-stat-num {
+  filter: brightness(1.2);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--social-color) 40%, transparent);
+}
+
+.social-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: color-mix(in srgb, var(--social-color) 50%, transparent);
+  transition: color 0.3s;
+}
+
+.showcase-social:hover .social-label {
+  color: color-mix(in srgb, var(--social-color) 85%, transparent);
+}
+
+/* GitHub link */
+.showcase-link.secondary {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   font-family: 'Orbitron', monospace;
-  font-size: 11px;
-  letter-spacing: 3px;
-  color: var(--yellow);
+  color: var(--cyan);
   text-decoration: none;
-  border: 1px solid rgba(252, 227, 0, 0.35);
-  padding: 13px 22px;
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  font-size: 10px;
+  letter-spacing: 3px;
+  padding: 10px 18px;
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   transition: all .3s;
   white-space: nowrap;
-}
-
-.showcase-link:hover {
-  background: rgba(252, 227, 0, 0.08);
-  border-color: var(--yellow);
-  gap: 15px;
-}
-
-.showcase-link.secondary {
-  color: var(--cyan);
-  border-color: rgba(0, 245, 255, 0.3);
-  font-size: 10px;
-  padding: 10px 18px;
 }
 
 .showcase-link.secondary:hover {
@@ -3399,6 +3432,23 @@ footer {
     align-items: flex-start;
     margin-top: 24px;
     min-width: unset;
+  }
+
+  .showcase-social {
+    align-items: flex-start;
+    padding: 12px 16px;
+  }
+
+  .social-stats {
+    gap: 14px;
+  }
+
+  .social-stat-num {
+    font-size: 12px;
+  }
+
+  .social-label {
+    font-size: 8px;
   }
 
   .showcase-bg-num {

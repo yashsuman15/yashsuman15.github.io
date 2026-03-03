@@ -355,10 +355,107 @@ Each project has:
     { label: 'CUDA Kernels', color: 'cyan' },
   ],
   videoSrc: '',                      // Path to demo video (see Section 9)
-  caseLink: '#',                     // URL to case study or live demo
+  social: {                           // Social platform stats (optional — one per project)
+    platform: 'reddit',              // Platform key (see PLATFORM_CONFIG below)
+    url: 'https://reddit.com/...',   // Link to the post (opens in new tab)
+    metrics: [                        // Flexible stats array — you define what to show
+      { icon: '▲', value: 342, label: 'upvotes' },
+      { icon: '◉', value: 12400, label: 'views' },
+      { icon: '↗', value: 28, label: 'shares' },
+    ],
+  },
   githubLink: '#',                   // URL to GitHub repo
 }
 ```
+
+### Social platform stats
+
+Each project can optionally show engagement metrics from **any platform** via the `social` field. The field is optional — if omitted, the stats block won't be shown for that project. Each project supports one platform.
+
+**Interfaces** (defined in `src/data/projects.ts`):
+
+- **`SocialMetric`** — `{ icon: string, value: number, label: string }` — a single stat
+- **`ProjectSocial`** — `{ platform: string, url: string, metrics: SocialMetric[] }` — the social block
+
+**`PLATFORM_CONFIG`** (defined in `src/app/components/Showcase.tsx`) maps platform keys to brand colors and display labels:
+
+| Platform key   | Color     | Display label  |
+|----------------|-----------|----------------|
+| `reddit`       | `#FF4500` | REDDIT         |
+| `linkedin`     | `#0A66C2` | LINKEDIN       |
+| `youtube`      | `#FF0000` | YOUTUBE        |
+| `twitter`      | `#1DA1F2` | X              |
+| `producthunt`  | `#DA552F` | PRODUCT HUNT   |
+
+**To add a new platform**, add one line to `PLATFORM_CONFIG` in `Showcase.tsx`:
+
+```ts
+newplatform: { color: '#HEX', label: 'DISPLAY NAME' },
+```
+
+Then use that key in your project data. CSS uses `var(--social-color)` so styling works automatically.
+
+**Example data entries for different platforms:**
+
+```ts
+// Reddit
+social: {
+  platform: 'reddit',
+  url: 'https://reddit.com/r/...',
+  metrics: [
+    { icon: '▲', value: 342, label: 'upvotes' },
+    { icon: '◉', value: 12400, label: 'views' },
+    { icon: '↗', value: 28, label: 'shares' },
+  ],
+},
+
+// LinkedIn
+social: {
+  platform: 'linkedin',
+  url: 'https://linkedin.com/posts/...',
+  metrics: [
+    { icon: '👍', value: 89, label: 'reactions' },
+    { icon: '💬', value: 14, label: 'comments' },
+    { icon: '↗', value: 5, label: 'reposts' },
+  ],
+},
+
+// YouTube
+social: {
+  platform: 'youtube',
+  url: 'https://youtube.com/watch?v=...',
+  metrics: [
+    { icon: '▶', value: 5200, label: 'views' },
+    { icon: '👍', value: 230, label: 'likes' },
+    { icon: '💬', value: 41, label: 'comments' },
+  ],
+},
+
+// Twitter / X
+social: {
+  platform: 'twitter',
+  url: 'https://x.com/.../status/...',
+  metrics: [
+    { icon: '♥', value: 120, label: 'likes' },
+    { icon: '↻', value: 34, label: 'reposts' },
+    { icon: '◉', value: 8900, label: 'views' },
+  ],
+},
+
+// Product Hunt
+social: {
+  platform: 'producthunt',
+  url: 'https://producthunt.com/posts/...',
+  metrics: [
+    { icon: '▲', value: 156, label: 'upvotes' },
+    { icon: '💬', value: 22, label: 'comments' },
+  ],
+},
+```
+
+- Numbers 1000+ are auto-formatted with K suffix (e.g., 12400 → "12.4K").
+- Stats are static/hardcoded — update them periodically from each platform's analytics.
+- To remove social stats from a project, delete the entire `social: { ... }` block from that project object.
 
 ### To update:
 
@@ -1109,6 +1206,7 @@ Delete the `<a href="/resume.pdf" ...>VIEW RESUME</a>` line from `Navigation.tsx
 | Engineer identity | `src/data/about.ts` — ENGINEER_NAME, ROLES | Edit the constants |
 | Hero stats | `src/data/about.ts` — HERO_STATS | Edit the array |
 | Showcase projects | `src/data/projects.ts` — SHOWCASE_PROJECTS | Edit the array (auto-syncs to AI chat) |
+| Social platform stats | `src/data/projects.ts` — `social` field per project + `Showcase.tsx` PLATFORM_CONFIG | Set platform, url, metrics array (or omit field). Add new platforms to PLATFORM_CONFIG |
 | Project demo videos | `public/videos/` + `src/data/projects.ts` | Add files, set videoSrc |
 | Completed gigs | `src/data/projects.ts` — COMPLETED_GIGS | Edit the array (auto-syncs to AI chat) |
 | Skills cards | `src/data/skills.ts` | Edit the SKILLS array (auto-syncs to AI chat) |
