@@ -23,11 +23,11 @@ export interface ShowcaseProject {
   githubLink: string;
 }
 
-export interface CompletedGig {
-  num: string;
-  name: string;
-  description: string;
-  tech: string[];
+export interface Highlight {
+  num: string;         // Display number: '01', '02', etc.
+  title: string;       // Short highlight name
+  description: string; // 1-2 sentence detail
+  stat?: string;       // Optional quantified result: "60% cost reduction", "99.2% accuracy"
 }
 
 export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
@@ -155,13 +155,13 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
     description:
       'Computer vision system that defines custom virtual perimeters on any camera feed and triggers instant alerts the moment a person or object crosses into a restricted zone. Goes beyond motion detection — understands object context, trajectory, and zone interaction to eliminate false positives from shadows, lighting shifts, or irrelevant movement.',
     insight:
-      'built a polygon-based virtual zone engine on top of YOLO detection — combining bounding box centroids with custom boundary logic to distinguish a genuine perimeter breach from ambient scene noise with near-zero false trigger rate.',
+      'built virtual zone engine on top of YOLO detection — combining bounding box centroids with custom boundary logic to distinguish a genuine perimeter breach from ambient scene noise with near-zero false trigger rate.',
     insightHighlight: 'Polygon zone engine with centroid boundary logic',
     tags: [
       { label: 'YOLOv8', color: 'yellow' },
       { label: 'OpenCV', color: 'purple' },
       { label: 'PyTorch', color: 'yellow' },
-      { label: 'Real-Time Alerts', color: 'purple' },
+      { label: 'Real-Time Monitoring', color: 'purple' },
       { label: 'Python', color: 'cyan' },
     ],
     videoSrc: '/videos/perimeter_sensing_compressed.mp4',
@@ -238,40 +238,12 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
   }
 ];
 
-export const COMPLETED_GIGS: CompletedGig[] = [
+export const HIGHLIGHTS: Highlight[] = [
+  // Populate with your real highlights — example:
   {
     num: '01',
-    name: 'NEUROMANCER-7',
-    description:
-      'Autonomous LLM agent system for corporate espionage detection \u2014 340M parameter custom architecture, 99.2% accuracy',
-    tech: ['PyTorch', 'LangChain', 'CUDA'],
-  },
-  {
-    num: '02',
-    name: 'GHOST SIGHT',
-    description:
-      'Real-time person re-identification system across 4,000+ surveillance nodes. Runs on edge hardware at 60fps',
-    tech: ['YOLO v9', 'TensorRT', 'OpenCV'],
-  },
-  {
-    num: '03',
-    name: 'CORPUS CHROMI',
-    description:
-      'Multimodal generative AI platform producing synthetic training data \u2014 saved 60% annotation costs for 3 corps',
-    tech: ['Diffusion', 'CLIP', 'VAE'],
-  },
-  {
-    num: '04',
-    name: 'NETWATCH SHIELD',
-    description:
-      'LLM-powered threat intelligence system processing 2TB/day of dark net data, alerting on zero-day exploits',
-    tech: ['RAG', 'Elasticsearch', 'Kafka'],
-  },
-  {
-    num: '05',
-    name: 'BRAINDANCE CODEC',
-    description:
-      'Neural signal compression and classification model for BD editing suites. Reduced file size by 89% with zero quality loss',
-    tech: ['Time-series ML', 'Signal Processing'],
+    title: 'Built real-time CV pipeline for manufacturing QC',
+    description: 'Deployed vision system on a bottle manufacturing line, automating cap and label inspection at full line speed.',
+    stat: '60% cost reduction',
   },
 ];

@@ -2,7 +2,7 @@
 // Portfolio data is auto-generated from the shared data files.
 // Only Alt's personality, backstory, and questions are hardcoded here.
 
-import { SHOWCASE_PROJECTS, COMPLETED_GIGS } from './projects';
+import { SHOWCASE_PROJECTS, HIGHLIGHTS } from './projects';
 import { SKILLS } from './skills';
 import { EXPERIENCE } from './experience';
 import {
@@ -43,7 +43,7 @@ export const SECTION_MAP: Record<string, string> = {
   about: 'PROFILE',
   showcase: 'FLAGSHIP PROJECTS',
   skills: 'CAPABILITIES',
-  projects: 'COMPLETED GIGS',
+  projects: 'HIGHLIGHTS',
   experience: 'OPERATIONAL HISTORY',
   contact: 'OPEN A CHANNEL',
 };
@@ -78,18 +78,19 @@ Key insight: ${p.insightHighlight} ${p.insight}
 Tech: ${tags}`;
   });
 
-  // Completed gigs that aren't already in showcase
-  const showcaseTitles = new Set(SHOWCASE_PROJECTS.map((p) => p.title));
-  const extraGigs = COMPLETED_GIGS.filter((g) => !showcaseTitles.has(g.name));
-  const gigLines = extraGigs.map((g) => {
-    return `PROJECT ${String(SHOWCASE_PROJECTS.length + extraGigs.indexOf(g) + 1).padStart(2, '0')}: ${g.name}
-Description: ${g.description}
-Tech: ${g.tech.join(', ')}`;
-  });
-
   const projects = `=== FLAGSHIP PROJECTS (section: showcase) ===
 
-${[...showcaseLines, ...gigLines].join('\n\n')}`;
+${showcaseLines.join('\n\n')}`;
+
+  // Highlights — key achievements from jobs and independent work
+  const highlightLines = HIGHLIGHTS.map((h, i) => {
+    const stat = h.stat ? ` | Result: ${h.stat}` : '';
+    return `HIGHLIGHT ${String(i + 1).padStart(2, '0')}: ${h.title}\nDescription: ${h.description}${stat}`;
+  });
+
+  const highlights = HIGHLIGHTS.length
+    ? `\n=== HIGHLIGHTS (section: projects) ===\n\n${highlightLines.join('\n\n')}`
+    : '';
 
   // Skills
   const skillLines = SKILLS.map((s, i) => {
@@ -134,6 +135,7 @@ ${Object.entries(SECTION_MAP)
 ${identity}
 
 ${projects}
+${highlights}
 
 ${skills}
 

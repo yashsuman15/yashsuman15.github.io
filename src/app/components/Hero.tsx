@@ -311,7 +311,7 @@ export function Hero({ onJackIn }: HeroProps) {
         <span>MEM: 256TB</span>
         <span>CPU: 99.8%</span>
         <span>{'\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500'}</span>
-        <span>// 2077.02.28</span>
+        <span>// 2026.02.28</span>
       </div>
 
       <div className="hero-terminal">

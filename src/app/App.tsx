@@ -90,8 +90,8 @@ export default function App() {
         <Marquee />
         <About />
         <Showcase />
-        <Skills />
         <Projects />
+        <Skills />
         <Experience />
         <Contact />
       </main>

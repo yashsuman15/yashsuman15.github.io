@@ -15,7 +15,7 @@ This guide walks you through every placeholder in the project and how to replace
 7. [Skill Bars (Augmentations)](#7-skill-bars-augmentations)
 8. [Flagship Projects (Showcase)](#8-flagship-projects-showcase)
 9. [Adding Project Videos](#9-adding-project-videos)
-10. [Completed Gigs List](#10-completed-gigs-list)
+10. [Highlights](#10-highlights)
 11. [Skills Cards](#11-skills-cards)
 12. [Work Experience](#12-work-experience)
 13. [Contact Info & Social Links](#13-contact-info--social-links)
@@ -496,22 +496,27 @@ The video will:
 
 ---
 
-## 10. Completed Gigs List
+## 10. Highlights
 
-**File:** `src/data/projects.ts` — `COMPLETED_GIGS` array
+**File:** `src/data/projects.ts` — `HIGHLIGHTS` array
 
-These are the simpler row-based project entries below the showcase.
+Key achievements and contributions from your professional roles and independent work. Displayed as a row-based list below the showcase section.
 
 ```ts
 {
-  num: '01',                          // Row number
-  name: 'NEUROMANCER-7',              // Project name
-  description: 'Autonomous LLM...',   // One-line description
-  tech: ['PyTorch', 'LangChain'],     // Tech pills shown on the right
+  num: '01',                                          // Display number
+  title: 'Built real-time CV pipeline for mfg QC',   // Short highlight name
+  description: 'Deployed vision system on a bottle manufacturing line...', // 1-2 sentence detail
+  stat: '60% cost reduction',                         // Optional quantified result
 }
 ```
 
-Add, remove, or edit entries freely. The numbering is just a display string — set whatever you want.
+- **`num`** — Display number (just a string, set whatever you want)
+- **`title`** — Short name for the highlight (shown as the row heading)
+- **`description`** — 1-2 sentence detail about what you did and the outcome
+- **`stat`** (optional) — A quantified result displayed prominently on the right side (e.g., "60% cost reduction", "99.2% accuracy", "2TB/day processed"). Omit the field to show no stat.
+- The section is **hidden entirely** when the `HIGHLIGHTS` array is empty.
+- Data auto-syncs to the AI chat context — Alt will reference your highlights when answering questions.
 
 ---
 
@@ -1208,7 +1213,7 @@ Delete the `<a href="/resume.pdf" ...>VIEW RESUME</a>` line from `Navigation.tsx
 | Showcase projects | `src/data/projects.ts` — SHOWCASE_PROJECTS | Edit the array (auto-syncs to AI chat) |
 | Social platform stats | `src/data/projects.ts` — `social` field per project + `Showcase.tsx` PLATFORM_CONFIG | Set platform, url, metrics array (or omit field). Add new platforms to PLATFORM_CONFIG |
 | Project demo videos | `public/videos/` + `src/data/projects.ts` | Add files, set videoSrc |
-| Completed gigs | `src/data/projects.ts` — COMPLETED_GIGS | Edit the array (auto-syncs to AI chat) |
+| Highlights | `src/data/projects.ts` — HIGHLIGHTS | Edit the array (auto-syncs to AI chat). Section hidden when empty |
 | Skills cards | `src/data/skills.ts` | Edit the SKILLS array (auto-syncs to AI chat) |
 | Work experience | `src/data/experience.ts` | Edit the EXPERIENCE array (auto-syncs to AI chat) |
 | Contact links | `src/data/contact.ts` — CONTACT_LINKS | Edit the array (auto-syncs to AI chat) |
@@ -1257,7 +1262,7 @@ Delete the `<a href="/resume.pdf" ...>VIEW RESUME</a>` line from `Navigation.tsx
     ├── data/                    ← ** SINGLE SOURCE OF TRUTH FOR ALL PORTFOLIO DATA **
     │   ├── about.ts             ← Bio, augmentations, hero stats, identity (auto-syncs to AI chat)
     │   ├── contact.ts           ← Contact links with real values (auto-syncs to AI chat)
-    │   ├── projects.ts          ← Showcase projects + completed gigs (auto-syncs to AI chat)
+    │   ├── projects.ts          ← Showcase projects + highlights (auto-syncs to AI chat)
     │   ├── skills.ts            ← Skills cards data (auto-syncs to AI chat)
     │   ├── experience.ts        ← Work history timeline entries (auto-syncs to AI chat)
     │   ├── chatContext.ts       ← AI chat: auto-generated context + Alt's questions + section map
