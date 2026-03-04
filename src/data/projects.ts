@@ -241,9 +241,15 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
 export const HIGHLIGHTS: Highlight[] = [
   // Populate with your real highlights — example:
   {
-    num: '01',
-    title: 'Built real-time CV pipeline for manufacturing QC',
-    description: 'Deployed vision system on a bottle manufacturing line, automating cap and label inspection at full line speed.',
-    stat: '60% cost reduction',
+  num: '01',
+  title: 'Built a Open-Source GitHub Repo',
+  description: 'Created a GitHub repository covering end-to-end CV pipelines and fine-tuned vision models for multiple real-world applications, gaining strong community traction.',
+  stat: '300+ GitHub stars',
   },
+  {
+  num: '02',
+  title: 'Scaled Labellerr AI\'s YouTube presence 100x with CV tutorials',
+  description: 'Designed and delivered a tutorial video series on applying computer vision across diverse industries, fueling explosive channel growth and expanding the CV learning community.',
+  stat: '100x growth in 1 year',
+  }
 ];
