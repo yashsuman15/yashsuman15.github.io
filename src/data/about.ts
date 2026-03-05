@@ -24,20 +24,21 @@ export const ENGINEER_ROLES = ['AI Engineer', 'Computer Vision Engineer', 'Gen-A
 // ── Bio paragraphs (rendered in About section) ──
 
 export const BIO_PARAGRAPHS: string[] = [
-  "Born from the digital sprawl of Night City, I've spent 7 years engineering artificial minds that push the limits of what machines can think, learn, and create. My neural implants keep me permanently jacked into the bleeding edge.",
-  'I specialize in large language models, autonomous AI agents, and computer vision systems \u2014 architectures that don\'t just process data, they understand context, adapt to chaos, and deliver results when the corps are watching.',
-  "Current fixers: Militech AI Division, Arasaka DataSec, and a few netrunner collectives you've never heard of. I keep my cred clean and my code cleaner.",
+  "I build AI systems that don't just process data — they perceive, reason, and take action. From real-time computer vision pipelines running on live camera feeds to autonomous agents that reason over documents, data, and tools, I work across the full stack: fine-tuning detection models for industrial deployments, architecting RAG systems for enterprise knowledge retrieval, and building agent workflows that handle complex multi-step tasks end to end.",
+  "On the vision side, I fine-tune YOLO, RTDETR, and many other segmentation models on domain-specific datasets for things like manufacturing QC, surveillance, traffic analysis, and smart city infrastructure — everything built to run in real time with production-grade accuracy.", 
+  "On the Agentic side, I design LLM-powered agents and retrieval pipelines that turn messy, unstructured data into something actually useful.",
+  "My project demos alone have reached up 1,000,000+ views across Reddit and YouTube.",
 ];
 
 // ── Short bio for chat context (combines the essence of the 3 paragraphs) ──
 
 export const BIO_SUMMARY =
-  '7 years engineering artificial minds that push the limits of what machines can think, learn, and create. Specializes in large language models, autonomous AI agents, and computer vision systems \u2014 architectures that understand context, adapt to chaos, and deliver results.';
+  'AI Engineer building real-time computer vision pipelines and LLM-powered agentic systems — fine-tuning detection and segmentation models for industrial deployments like manufacturing QC, surveillance, and traffic analysis, while designing autonomous agents and RAG pipelines that turn unstructured data into actionable intelligence. Currently at Labellerr AI, with 1,000,000+ views on project demos across Reddit and YouTube.';
 
 // ── Neural augmentation bars (About section skill bars) ──
 
 export const AUGMENTATIONS: Augmentation[] = [
-  { name: 'Python / PyTorch', width: '97%', delay: '0s' },
+  { name: 'Python', width: '97%', delay: '0s' },
   { name: 'Computer Vision', width: '91%', delay: '.2s' },
   { name: 'GEN AI', width: '94%', delay: '.4s' },
   { name: 'AI AGENTS', width: '88%', delay: '.6s' },
@@ -46,7 +47,7 @@ export const AUGMENTATIONS: Augmentation[] = [
 // ── Hero stats ──
 
 export const HERO_STATS: HeroStat[] = [
-  { value: '7+', label: 'YEARS JACKED IN' },
-  { value: '42', label: 'MODELS DEPLOYED' },
-  { value: '99%', label: 'NEURAL UPTIME' },
+  { value: '10+', label: 'PROJECTS DONE' },
+  { value: '100+', label: 'MODELS FINETUNED & TRAINED' },
+  { value: '1 Million +', label: 'PROJECT IMPRESSIONS' },
 ];

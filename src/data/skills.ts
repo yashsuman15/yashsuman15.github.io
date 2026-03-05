@@ -46,8 +46,7 @@ export const SKILLS: Skill[] = [
     description:
       'End-to-end ML pipelines, model serving at scale, monitoring, and deployment on hybrid cloud + edge systems.',
     tags: [
-      { label: 'Kubernetes', color: 'cyan' },
-      { label: 'Ray', color: 'yellow' },
+      { label: 'Docker', color: 'cyan' },
       { label: 'MLflow', color: 'cyan' },
     ],
   },

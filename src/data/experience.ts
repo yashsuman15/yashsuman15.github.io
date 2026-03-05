@@ -13,7 +13,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     role: 'AI ENGINEER',
     company: '\u25c8 LABELLERR AI // CHANDIGARH',
     description:
-      'Built the core NLP pipeline for corporate document analysis \u2014 fine-tuned proprietary LLMs on 40B token corpus. Designed the threat classification system still running in production today.',
+      'Built and deployed multiple computer vision pipelines, researched and benchmarked various CV models, performed POCs across domains like manufacturing, surveillance, and smart cities, developed RAG-based AI agents, and contributed to the Labellerr Python SDK — now serving 500+ developers.',
     dotColor: '#00F5FF',
     dotShadow: '0 0 16px rgba(0,245,255,0.6)',
   },

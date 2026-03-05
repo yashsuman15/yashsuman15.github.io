@@ -251,5 +251,17 @@ export const HIGHLIGHTS: Highlight[] = [
   title: 'Scaled Labellerr AI\'s YouTube presence 100x with CV tutorials',
   description: 'Designed and delivered a tutorial video series on applying computer vision across diverse industries, fueling explosive channel growth and expanding the CV learning community.',
   stat: '100x growth in 1 year',
+  },
+  {
+  num: '03',
+  title: 'Built vision-based QA pipeline for a Canadian pharmacy chain',
+  description: 'Developed a computer vision solution for Pharmacie SB to automate their quality assurance process, significantly reducing manual inspection overhead and accelerating throughput.',
+  stat: '80% Faster QA Pipeline',
+  },
+  {
+  num: '04',
+  title: 'Published 100+ technical blogs across the modern AI stack',
+  description: 'Authored an extensive library of technical articles covering Computer Vision, LLMs, Gen-AI, and Agentic workflows, collectively amassing over 30 million impressions.',
+  stat: '30 Million+ Total Impressions',
   }
 ];

@@ -275,24 +275,22 @@ export function Hero({ onJackIn }: HeroProps) {
           <span className="hero-title-cursor" />
         </div>
         <p className="hero-desc">
-          Neural net architect &amp; machine learning specialist operating in the
-          gray zones of Night City's data streams. I engineer intelligence that
-          adapts, learns, and survives in hostile digital environments.
+          Hi, I'm an AI Engineer who builds AI Implemented solutions from Computer Vision pipelines to AI Agents and everything in between across various domains. Take a look around.
         </p>
         <div className="hero-stats">
           <div className="stat">
-            <span className="stat-num">7+</span>
-            <span className="stat-label">YEARS JACKED IN</span>
+            <span className="stat-num">10+</span>
+            <span className="stat-label">PROJECTS DONE</span>
           </div>
           <div className="stat-divider" />
           <div className="stat">
-            <span className="stat-num">42</span>
-            <span className="stat-label">MODELS DEPLOYED</span>
+            <span className="stat-num">100+</span>
+            <span className="stat-label">MODELS FINETUNED & TRAINED</span>
           </div>
           <div className="stat-divider" />
           <div className="stat">
-            <span className="stat-num">99%</span>
-            <span className="stat-label">NEURAL UPTIME</span>
+            <span className="stat-num">1 MILLION +</span>
+            <span className="stat-label">PROJECT IMPRESSIONS</span>
           </div>
         </div>
         <div className="hero-btns">
