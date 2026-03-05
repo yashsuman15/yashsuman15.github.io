@@ -12,10 +12,21 @@ export const SKILLS: Skill[] = [
     description:
       'Architecting and fine-tuning transformer-based models. Custom training pipelines, RLHF, prompt engineering at scale.',
     tags: [
-      { label: 'GPT-4', color: 'cyan' },
+      { label: 'Hugging Face', color: 'cyan' },
+      { label: 'Ollama', color: 'yellow' },
+      { label: 'Transformers', color: 'pink' },
+      
+      { label: 'Quantization', color: 'cyan' },
+      { label: 'Optimization', color: 'yellow' },
+      { label: 'Fine-tuning', color: 'pink' },
+
+      { label: 'PEFT', color: 'cyan' },
+      { label: 'Prompt Engineering', color: 'yellow' },
+      { label: 'ModelScope', color: 'pink' },
+
+      { label: 'GPT', color: 'cyan' },
       { label: 'LLaMA', color: 'yellow' },
-      { label: 'Mistral', color: 'cyan' },
-      { label: 'RLHF', color: 'pink' },
+      { label: 'PyTorch', color: 'cyan' },
     ],
   },
   {
@@ -24,9 +35,17 @@ export const SKILLS: Skill[] = [
     description:
       'Real-time object detection, image segmentation, and generative vision systems for hostile urban environments.',
     tags: [
-      { label: 'YOLO', color: 'yellow' },
+      { label: 'YOLO Series', color: 'yellow' },
       { label: 'Stable Diffusion', color: 'cyan' },
-      { label: 'SAM', color: 'cyan' },
+      { label: 'SAM Series', color: 'pink' },
+
+      { label: 'Object Tracking', color: 'yellow' },
+      { label: 'Object Classification', color: 'cyan' },
+      { label: 'Depth Estimation', color: 'pink' },
+
+      { label: 'ONNX / TensorRT', color: 'yellow' },
+      { label: 'FFMPEG', color: 'cyan' },
+      { label: 'OpenCV', color: 'pink' },
     ],
   },
   {
@@ -38,6 +57,15 @@ export const SKILLS: Skill[] = [
       { label: 'LangChain', color: 'pink' },
       { label: 'AutoGen', color: 'cyan' },
       { label: 'CrewAI', color: 'yellow' },
+
+      { label: 'smolagents', color: 'pink' },
+      { label: 'Tool Calling', color: 'cyan' },
+      { label: 'RAG', color: 'yellow' },
+
+      { label: 'MCP', color: 'pink' },
+      { label: 'LangGraph', color: 'cyan' },
+      { label: 'n8n', color: 'yellow' },
+
     ],
   },
   {
@@ -63,12 +91,16 @@ export const SKILLS: Skill[] = [
   },
   {
     icon: '\ud83d\udd10',
-    name: 'AI SECURITY',
+    name: 'Other Skills',
     description:
-      'Adversarial robustness, red-teaming LLMs, jailbreak detection, and building defenses for production AI systems.',
+      '-',
     tags: [
-      { label: 'Red Teaming', color: 'yellow' },
-      { label: 'Adversarial ML', color: 'pink' },
+      { label: 'Pydantic', color: 'yellow' },
+      { label: 'Instructor', color: 'pink' },
+      { label: 'Databases', color: 'yellow' },
+      { label: 'Git', color: 'pink' },
+      { label: 'FastAPI', color: 'cyan' },
+      
     ],
   },
 ];
