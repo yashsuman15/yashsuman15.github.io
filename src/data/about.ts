@@ -25,7 +25,7 @@ export const ENGINEER_ROLES = ['AI Engineer', 'Computer Vision Engineer', 'Gen-A
 
 export const BIO_PARAGRAPHS: string[] = [
   "I build AI systems that don't just process data — they perceive, reason, and take action. From real-time computer vision pipelines running on live camera feeds to autonomous agents that reason over documents, data, and tools, I work across the full stack: fine-tuning detection models for industrial deployments, architecting RAG systems for enterprise knowledge retrieval, and building agent workflows that handle complex multi-step tasks end to end.",
-  "On the vision side, I fine-tune YOLO, RTDETR, and many other segmentation models on domain-specific datasets for things like manufacturing QC, surveillance, traffic analysis, and smart city infrastructure — everything built to run in real time with production-grade accuracy.", 
+  "On the vision side, I fine-tune YOLO, RTDETR, and many other vision models on domain-specific datasets for things like manufacturing QC, surveillance, traffic analysis, and smart city infrastructure — everything built to run in real time with production-grade accuracy.", 
   "On the Agentic side, I design LLM-powered agents and retrieval pipelines that turn messy, unstructured data into something actually useful.",
   "My project demos alone have reached up 1,000,000+ views across Reddit and YouTube.",
 ];
