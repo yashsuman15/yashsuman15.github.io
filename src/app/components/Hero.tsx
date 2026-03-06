@@ -275,7 +275,7 @@ export function Hero({ onJackIn }: HeroProps) {
           <span className="hero-title-cursor" />
         </div>
         <p className="hero-desc">
-          Hi, I'm an AI Engineer who builds AI Implemented solutions from Computer Vision pipelines to AI Agents and everything in between across various domains. Take a look around.
+          Hi, I’m an AI Engineer specializing in building AI-powered solutions across multiple domains. My work ranges from developing computer vision pipelines to designing AI agents and intelligent systems that solve real-world problems. Feel free to explore my work and projects.
         </p>
         <div className="hero-stats">
           <div className="stat">
