@@ -1,6 +1,6 @@
 // ── Alt Cunningham AI Chat — Data & Prompt Context ──
 // Portfolio data is auto-generated from the shared data files.
-// Only Alt's personality, backstory, and questions are hardcoded here.
+// Only Alt's personality, intro, and questions are hardcoded here.
 
 import { SHOWCASE_PROJECTS, HIGHLIGHTS } from './projects';
 import { SKILLS } from './skills';
@@ -29,8 +29,8 @@ export const ALT_QUESTIONS: string[] = [
 
 export const YASH_QUESTIONS: string[] = [
   "What are Yash's core capabilities?",
-  "Tell me about Yash's most advanced project.",
-  "What is Yash's operational history?",
+  'Tell me about a standout project.',
+  'Where has Yash worked?',
   'How do I contact Yash?',
 ];
 
@@ -40,40 +40,63 @@ export const SECTION_MAP: Record<string, string> = {
   hero: 'HOME',
   about: 'PROFILE',
   showcase: 'FLAGSHIP PROJECTS',
-  skills: 'CAPABILITIES',
+  skills: 'SKILL DECK',
   projects: 'HIGHLIGHTS',
-  experience: 'OPERATIONAL HISTORY',
-  contact: 'OPEN A CHANNEL',
+  experience: 'WORK EXPERIENCE',
+  contact: 'CONTACT',
 };
+
+// ── Compute years active from work experience ──
+
+function computeYearsActive(): string {
+  const MONTH_NAMES = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const startDates = EXPERIENCE.map((e) => {
+    const match = e.date.match(/^([A-Z]+)\s+(\d{4})/);
+    if (!match) return new Date();
+    const monthIndex = MONTH_NAMES.findIndex((m) => match[1].startsWith(m));
+    return new Date(parseInt(match[2]), monthIndex >= 0 ? monthIndex : 0);
+  });
+  const earliest = new Date(Math.min(...startDates.map((d) => d.getTime())));
+  const now = new Date();
+  const totalMonths =
+    (now.getFullYear() - earliest.getFullYear()) * 12 +
+    (now.getMonth() - earliest.getMonth());
+  const years = Math.round(totalMonths / 6) * 0.5; // round to nearest 0.5
+  if (years < 1) return 'Less than a year';
+  return `${years}+ year${years === 1 ? '' : 's'}`;
+}
 
 // ── Auto-generate PORTFOLIO_CONTEXT from data files ──
 
 function buildPortfolioContext(): string {
-  // Identity
-  const yearsStr = HERO_STATS.find((s) => s.label.includes('YEARS'))?.value ?? '7+';
-  const modelsStr = HERO_STATS.find((s) => s.label.includes('MODELS'))?.value ?? '42';
-  const uptimeStr = HERO_STATS.find((s) => s.label.includes('UPTIME'))?.value ?? '99%';
+  // Identity — dynamic stats from HERO_STATS + computed years from EXPERIENCE
+  const statsStr = HERO_STATS.map((s) => `- ${s.value} ${s.label}`).join('\n');
+  const yearsActive = computeYearsActive();
 
   const identity = `=== ENGINEER IDENTITY ===
 Name: ${ENGINEER_NAME} (alias: ${ENGINEER_ALIAS})
 Role: ${ENGINEER_ROLES.join(' / ')}
-Years active: ${yearsStr}
-Models deployed: ${modelsStr}
-Neural uptime: ${uptimeStr}
+Years active: ${yearsActive} (computed from work history)
 Bio: ${BIO_SUMMARY}
+
+Key stats:
+${statsStr}
 
 Core proficiencies (with proficiency level):
 ${AUGMENTATIONS.map((a) => `- ${a.name}: ${a.width}`).join('\n')}`;
 
-  // Flagship projects (showcase)
+  // Flagship projects (showcase) — includes social proof when available
   const showcaseLines = SHOWCASE_PROJECTS.map((p, i) => {
     const num = String(i + 1).padStart(2, '0');
     const tags = p.tags.map((t) => t.label).join(', ');
+    const socialLine = p.social
+      ? `\nSocial proof (${p.social.platform}): ${p.social.metrics.map((m) => `${m.value.toLocaleString()} ${m.label}`).join(', ')}`
+      : '';
     return `PROJECT ${num}: ${p.title}
 Subtitle: ${p.subtitle}
 Description: ${p.description}
 Key insight: ${p.insightHighlight} ${p.insight}
-Tech: ${tags}`;
+Tech: ${tags}${socialLine}`;
   });
 
   const projects = `=== FLAGSHIP PROJECTS (section: showcase) ===
@@ -120,7 +143,7 @@ ${expLines.join('\n\n')}`;
 
   const contact = `=== CONTACT (section: contact) ===
 ${contactLines.join('\n')}
-Method: Contact form available on the portfolio with direct encrypted channel.`;
+Method: Contact form available on the portfolio.`;
 
   // Navigation
   const nav = `=== NAVIGATION ===

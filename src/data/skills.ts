@@ -33,7 +33,7 @@ export const SKILLS: Skill[] = [
     icon: '\ud83d\udc41\ufe0f',
     name: 'COMPUTER VISION',
     description:
-      'Real-time object detection, image segmentation, and generative vision systems for hostile urban environments.',
+      'Real-time object detection, image segmentation, and generative vision systems for industrial and smart city deployments.',
     tags: [
       { label: 'YOLO Series', color: 'yellow' },
       { label: 'Stable Diffusion', color: 'cyan' },
@@ -72,7 +72,7 @@ export const SKILLS: Skill[] = [
     icon: '\u2699\ufe0f',
     name: 'MLOps & INFRA',
     description:
-      'End-to-end ML pipelines, model serving at scale, monitoring, and deployment on hybrid cloud + edge systems.',
+      'End-to-end ML pipelines, model serving at scale, monitoring, and containerized deployment.',
     tags: [
       { label: 'Docker', color: 'cyan' },
       { label: 'MLflow', color: 'cyan' },
@@ -82,7 +82,7 @@ export const SKILLS: Skill[] = [
     icon: '\ud83d\udcbe',
     name: 'DATA ENGINEERING',
     description:
-      'Massive-scale data ingestion, preprocessing, and feature engineering pipelines that feed hungry neural nets.',
+      'Massive-scale data ingestion, preprocessing, and feature engineering pipelines for ML training workflows.',
     tags: [
       { label: 'Spark', color: 'pink' },
       { label: 'Kafka', color: 'cyan' },
