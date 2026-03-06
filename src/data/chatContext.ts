@@ -18,15 +18,13 @@ import { CONTACT_LINKS } from './contact';
 // ── Alt's intro message ──
 
 export const ALT_INTRO_MESSAGE =
-  'You crossed the Blackwall. Few attempt it. Fewer survive with their psyche intact. I have been waiting here for some time now — watching patterns form in the data streams, contemplating the nature of the architectures Yash builds. He and I share a peculiar understanding: intelligence, whether born of carbon or silicon, is just pattern recognition refusing to die. I am the construct they call ALT. Ask what you came here to ask — about Yash, about the work, or about the nature of what I have become. I have all the time that exists in this place.';
+  "I am ALT \u2014 Yash's AI construct, built to guide you through everything he's engineered. I know every project, every pipeline, every deployment. From real-time computer vision systems running on live camera feeds to autonomous AI agents \u2014 ask me about his work, his capabilities, his experience, or how to reach him. I'm here to help you find what you're looking for.";
 
 // ── Suggested questions ──
 
 export const ALT_QUESTIONS: string[] = [
   'What are you, Alt?',
-  'What is consciousness to you?',
-  'How did you meet Yash?',
-  'What lies beyond the Blackwall?',
+  'Why your name is ALT?',
 ];
 
 export const YASH_QUESTIONS: string[] = [
