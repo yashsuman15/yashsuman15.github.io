@@ -88,9 +88,9 @@ export default function App() {
       <main>
         <Hero onJackIn={openChat} />
         <Marquee />
-        <About />
         <Showcase />
         <Projects />
+        <About />
         <Skills />
         <Experience />
         <Contact />

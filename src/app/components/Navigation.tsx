@@ -9,9 +9,10 @@ export function Navigation() {
         <img src="/logo.webp" alt="Logo" style={{ height: '32px' }} />
       </a>
       <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
-        <a href="#about" onClick={() => setMenuOpen(false)}>// ABOUT</a>
-        <a href="#skills" onClick={() => setMenuOpen(false)}>// SKILLS</a>
         <a href="#showcase" onClick={() => setMenuOpen(false)}>// PROJECTS</a>
+        <a href="#projects" onClick={() => setMenuOpen(false)}>// HIGHLIGHTS</a>
+        <a href="#about" onClick={() => setMenuOpen(false)}>// ABOUT</a>
+        <a href="#skills" onClick={() => setMenuOpen(false)}>// SKILL DECK</a>
         <a href="#experience" onClick={() => setMenuOpen(false)}>// EXP</a>
         <a href="#contact" onClick={() => setMenuOpen(false)}>// CONTACT</a>
       </div>
