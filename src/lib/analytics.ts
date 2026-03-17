@@ -7,16 +7,8 @@ import posthog from 'posthog-js';
  * - Auto-captures page views and page leaves
  */
 export function initAnalytics() {
-  const key = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
-  const host = import.meta.env.VITE_PUBLIC_POSTHOG_HOST;
-
-  if (!key) {
-    console.log('[Analytics] PostHog key not found, skipping initialization');
-    return;
-  }
-
-  posthog.init(key, {
-    api_host: host || 'https://us.i.posthog.com',
+  posthog.init('phc_1ay6bXWrGQgFhuWrXLWU0iy1MCl6vEFvVSGBFrRjJiy', {
+    api_host: 'https://us.i.posthog.com',
     persistence: 'memory', // Cookieless - no cookie banner needed
     capture_pageview: true,
     capture_pageleave: true,
