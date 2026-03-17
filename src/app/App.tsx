@@ -1,22 +1,18 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { BootIntro } from './components/BootIntro';
 import { Navigation } from './components/Navigation';
 import { Hero } from './components/Hero';
-import { Marquee } from './components/Marquee';
-import { About } from './components/About';
-import { Showcase } from './components/Showcase';
-import { Skills } from './components/Skills';
 import { Projects } from './components/Projects';
+import { About } from './components/About';
+import { Writing } from './components/Writing';
+import { Highlights } from './components/Highlights';
 import { Experience } from './components/Experience';
+import { Skills } from './components/Skills';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
-import { ScrollIndicator } from './components/ScrollIndicator';
 import { Chat } from './components/Chat';
 
 export default function App() {
-  const [bootComplete, setBootComplete] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [triggerDisconnect, setTriggerDisconnect] = useState(false);
 
   // Ref to track current chat state inside the popstate listener
   const isChatOpenRef = useRef(false);
@@ -34,18 +30,14 @@ export default function App() {
     window.history.pushState({ chat: true }, '');
   }, []);
 
-  // Called by Chat's onClose after disconnect animation completes
+  // Close chat
   const closeChat = useCallback(() => {
     setIsChatOpen(false);
-    setTriggerDisconnect(false);
   }, []);
 
-  // Manual close (DISCONNECT button, Escape key, nav-link inside chat)
-  // needs to pop the history entry we pushed when chat opened
+  // Manual close (Close button, Escape key)
   const handleManualClose = useCallback(() => {
     setIsChatOpen(false);
-    setTriggerDisconnect(false);
-    // Pop the chat history entry — ignore the resulting popstate event
     ignoringPopstate.current = true;
     window.history.back();
   }, []);
@@ -53,16 +45,12 @@ export default function App() {
   // Listen for browser back button
   useEffect(() => {
     const handlePopstate = () => {
-      // If we triggered this popstate ourselves via history.back(), ignore it
       if (ignoringPopstate.current) {
         ignoringPopstate.current = false;
         return;
       }
-      // If chat is open, trigger the disconnect animation
       if (isChatOpenRef.current) {
-        setTriggerDisconnect(true);
-        // Don't call setIsChatOpen(false) here — Chat's onClose will do that
-        // after the disconnect animation completes
+        setIsChatOpen(false);
       }
     };
 
@@ -70,40 +58,48 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopstate);
   }, []);
 
+  // Header scroll effect
+  useEffect(() => {
+    const header = document.getElementById('header');
+    const handleScroll = () => {
+      header?.classList.toggle('scrolled', window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
-      {/* Boot intro overlay */}
-      {!bootComplete && <BootIntro onComplete={() => setBootComplete(true)} />}
-
-      {/* Noise overlay */}
-      <div className="noise" />
-
-      {/* Scroll indicator */}
-      <ScrollIndicator />
-
       {/* Navigation */}
       <Navigation />
 
       {/* Main content */}
       <main>
-        <Hero onJackIn={openChat} />
-        <Marquee />
-        <Showcase />
+        <Hero onOpenChat={openChat} />
         <Projects />
         <About />
-        <Skills />
+        <Writing />
+        <Highlights />
         <Experience />
+        <Skills />
         <Contact />
       </main>
 
       <Footer />
 
-      {/* Alt Cunningham Chat Overlay */}
+      {/* Floating chat button */}
+      <button className="chat-fab" onClick={openChat}>
+        <svg className="chat-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <span className="chat-fab-text">Chat with my AI Assistant</span>
+      </button>
+
+      {/* Alt Chat Overlay */}
       {isChatOpen && (
         <Chat
           isOpen={isChatOpen}
-          onClose={triggerDisconnect ? closeChat : handleManualClose}
-          triggerDisconnect={triggerDisconnect}
+          onClose={handleManualClose}
         />
       )}
     </>

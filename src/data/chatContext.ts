@@ -1,34 +1,34 @@
-// ── Alt Cunningham AI Chat — Data & Prompt Context ──
+// ── Alt AI Assistant — Data & Prompt Context ──
 // Portfolio data is auto-generated from the shared data files.
 // Only Alt's personality, intro, and questions are hardcoded here.
 
-import { SHOWCASE_PROJECTS, HIGHLIGHTS } from './projects';
-import { SKILLS } from './skills';
+import { SHOWCASE_PROJECTS, AGENT_PROJECTS, HIGHLIGHTS } from './projects';
 import { EXPERIENCE } from './experience';
 import {
   ENGINEER_NAME,
-  ENGINEER_ALIAS,
   ENGINEER_ROLES,
   BIO_SUMMARY,
-  AUGMENTATIONS,
   HERO_STATS,
+  PROFICIENCIES,
+  SKILL_COLUMNS,
 } from './about';
 import { CONTACT_LINKS } from './contact';
+import { VIDEOS, ARTICLES } from './writing';
 
 // ── Alt's intro message ──
 
 export const ALT_INTRO_MESSAGE =
-  "I am ALT \u2014 Yash's AI construct, built to guide you through everything he's engineered. I know every project, every pipeline, every deployment. From real-time computer vision systems running on live camera feeds to autonomous AI agents \u2014 ask me about his work, his capabilities, his experience, or how to reach him. I'm here to help you find what you're looking for.";
+  "Hi! I'm Alt, Yash's AI assistant. I'm here to help you learn about his work — from real-time computer vision systems to LLM-powered agents. Feel free to ask me about his projects, skills, experience, or how to get in touch.";
 
 // ── Suggested questions ──
 
 export const ALT_QUESTIONS: string[] = [
-  'What are you, Alt?',
-  'Why your name is ALT?',
+  'What can you help me with?',
+  'Why are you called Alt?',
 ];
 
 export const YASH_QUESTIONS: string[] = [
-  "What are Yash's core capabilities?",
+  "What are Yash's main skills?",
   'Tell me about a standout project.',
   'Where has Yash worked?',
   'How do I contact Yash?',
@@ -37,23 +37,23 @@ export const YASH_QUESTIONS: string[] = [
 // ── Section map (for [NAV:id] markers) ──
 
 export const SECTION_MAP: Record<string, string> = {
-  hero: 'HOME',
-  about: 'PROFILE',
-  showcase: 'FLAGSHIP PROJECTS',
-  skills: 'SKILL DECK',
-  projects: 'HIGHLIGHTS',
-  experience: 'WORK EXPERIENCE',
-  contact: 'CONTACT',
+  hero: 'Home',
+  projects: 'Projects',
+  writing: 'Writing & Content',
+  experience: 'Experience',
+  skills: 'Skills',
+  contact: 'Contact',
 };
 
 // ── Compute years active from work experience ──
 
 function computeYearsActive(): string {
-  const MONTH_NAMES = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const MONTH_NAMES = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   const startDates = EXPERIENCE.map((e) => {
-    const match = e.date.match(/^([A-Z]+)\s+(\d{4})/);
+    const match = e.dateRange.match(/^([A-Za-z]+)\s+(\d{4})/i);
     if (!match) return new Date();
-    const monthIndex = MONTH_NAMES.findIndex((m) => match[1].startsWith(m));
+    const monthStr = match[1].toUpperCase().slice(0, 3);
+    const monthIndex = MONTH_NAMES.indexOf(monthStr);
     return new Date(parseInt(match[2]), monthIndex >= 0 ? monthIndex : 0);
   });
   const earliest = new Date(Math.min(...startDates.map((d) => d.getTime())));
@@ -61,7 +61,7 @@ function computeYearsActive(): string {
   const totalMonths =
     (now.getFullYear() - earliest.getFullYear()) * 12 +
     (now.getMonth() - earliest.getMonth());
-  const years = Math.round(totalMonths / 6) * 0.5; // round to nearest 0.5
+  const years = Math.round(totalMonths / 6) * 0.5;
   if (years < 1) return 'Less than a year';
   return `${years}+ year${years === 1 ? '' : 's'}`;
 }
@@ -69,93 +69,120 @@ function computeYearsActive(): string {
 // ── Auto-generate PORTFOLIO_CONTEXT from data files ──
 
 function buildPortfolioContext(): string {
-  // Identity — dynamic stats from HERO_STATS + computed years from EXPERIENCE
   const statsStr = HERO_STATS.map((s) => `- ${s.value} ${s.label}`).join('\n');
   const yearsActive = computeYearsActive();
 
-  const identity = `=== ENGINEER IDENTITY ===
-Name: ${ENGINEER_NAME} (alias: ${ENGINEER_ALIAS})
+  const identity = `=== YASH'S PROFILE ===
+Name: ${ENGINEER_NAME}
 Role: ${ENGINEER_ROLES.join(' / ')}
-Years active: ${yearsActive} (computed from work history)
+Years of experience: ${yearsActive}
 Bio: ${BIO_SUMMARY}
 
 Key stats:
 ${statsStr}
 
-Core proficiencies (with proficiency level):
-${AUGMENTATIONS.map((a) => `- ${a.name}: ${a.width}`).join('\n')}`;
+Core proficiencies:
+${PROFICIENCIES.map((p) => `- ${p.name}: ${p.percentage}%`).join('\n')}`;
 
-  // Flagship projects (showcase) — includes social proof when available
-  const showcaseLines = SHOWCASE_PROJECTS.map((p, i) => {
-    const num = String(i + 1).padStart(2, '0');
-    const tags = p.tags.map((t) => t.label).join(', ');
-    const socialLine = p.social
-      ? `\nSocial proof (${p.social.platform}): ${p.social.metrics.map((m) => `${m.value.toLocaleString()} ${m.label}`).join(', ')}`
-      : '';
-    return `PROJECT ${num}: ${p.title}
-Subtitle: ${p.subtitle}
-Description: ${p.description}
-Key insight: ${p.insightHighlight} ${p.insight}
-Tech: ${tags}${socialLine}`;
+  // AI Agent projects
+  const agentLines = AGENT_PROJECTS.map((p, i) => {
+    return `${i + 1}. ${p.title} [${p.tag}]
+   ${p.description}
+   Tech: ${p.tech}`;
   });
 
-  const projects = `=== FLAGSHIP PROJECTS (section: showcase) ===
+  const agents = `=== AI AGENTS & LLM SYSTEMS (section: projects) ===
 
-${showcaseLines.join('\n\n')}`;
+${agentLines.join('\n\n')}`;
 
-  // Highlights — key achievements from jobs and independent work
-  const highlightLines = HIGHLIGHTS.map((h, i) => {
-    const stat = h.stat ? ` | Result: ${h.stat}` : '';
-    return `HIGHLIGHT ${String(i + 1).padStart(2, '0')}: ${h.title}\nDescription: ${h.description}${stat}`;
+  // Computer Vision projects with social proof
+  const cvLines = SHOWCASE_PROJECTS.map((p, i) => {
+    const socialLine = p.social
+      ? `\n   Social proof (${p.social.platform}): ${p.social.metrics.map((m) => `${m.value.toLocaleString()} ${m.label}`).join(', ')}`
+      : '';
+    return `${i + 1}. ${p.title}
+   ${p.subtitle}
+   ${p.description}
+   Tech: ${p.tags.map((t) => t.label).join(', ')}${socialLine}`;
+  });
+
+  const cvProjects = `=== COMPUTER VISION SYSTEMS (section: projects) ===
+
+${cvLines.join('\n\n')}`;
+
+  // Writing & Content
+  const videoList = VIDEOS.map((v) => `- ${v.title}`).join('\n');
+  const articleList = ARTICLES.slice(0, 6).map((a) => `- ${a.title} (${a.category})`).join('\n');
+
+  const writing = `=== WRITING & CONTENT (section: writing) ===
+Yash has created 25+ technical articles and 5+ video tutorials for Labellerr AI.
+
+Recent videos:
+${videoList}
+
+Recent articles:
+${articleList}
+...and more on the Labellerr blog.`;
+
+  // Highlights
+  const highlightLines = HIGHLIGHTS.map((h) => {
+    const stat = h.stat ? ` — ${h.stat}` : '';
+    return `- ${h.title}${stat}`;
   });
 
   const highlights = HIGHLIGHTS.length
-    ? `\n=== HIGHLIGHTS (section: projects) ===\n\n${highlightLines.join('\n\n')}`
+    ? `=== KEY ACHIEVEMENTS ===
+
+${highlightLines.join('\n')}`
     : '';
 
   // Skills
-  const skillLines = SKILLS.map((s, i) => {
-    const tags = s.tags.map((t) => t.label).join(', ');
-    return `${i + 1}. ${s.name} — ${s.description} Tags: ${tags}`;
+  const skillLines = SKILL_COLUMNS.map((col) => {
+    return `${col.title}:\n${col.items.map((item) => `  - ${item}`).join('\n')}`;
   });
 
-  const skills = `=== SKILLS (section: skills) ===
+  const skills = `=== TECHNICAL SKILLS (section: skills) ===
 
-${skillLines.join('\n')}`;
+${skillLines.join('\n\n')}`;
 
   // Experience
-  const expLines = EXPERIENCE.map((e, i) => {
-    // Strip the diamond icon prefix from company if present
-    const company = e.company.replace(/^◈\s*/, '');
-    return `${i + 1}. ${e.date}: ${e.role} at ${company}
-   ${e.description}`;
+  const expLines = EXPERIENCE.map((e) => {
+    const bullets = e.bullets.map((b) => `  - ${b}`).join('\n');
+    return `${e.role} at ${e.company}, ${e.location}
+${e.dateRange}
+${e.summary}
+
+Key responsibilities:
+${bullets}`;
   });
 
-  const experience = `=== EXPERIENCE (section: experience) ===
+  const experience = `=== WORK EXPERIENCE (section: experience) ===
 
 ${expLines.join('\n\n')}`;
 
   // Contact
-  const contactLines = CONTACT_LINKS.map((c) => {
-    // Clean up display: for email, just show the address; for others, show displayText
-    return `${c.label}: ${c.displayText}`;
-  });
+  const contactLines = CONTACT_LINKS.map((c) => `${c.label}: ${c.displayText}`);
 
   const contact = `=== CONTACT (section: contact) ===
 ${contactLines.join('\n')}
-Method: Contact form available on the portfolio.`;
+Visitors can reach out via the contact section on the portfolio.`;
 
   // Navigation
   const nav = `=== NAVIGATION ===
-Valid section IDs that can be referenced with [NAV:id] markers:
+Valid section IDs for [NAV:id] markers:
 ${Object.entries(SECTION_MAP)
-  .map(([id, name]) => `- ${id} — ${name}`)
-  .join('\n')}`;
+    .map(([id, name]) => `- ${id} — ${name}`)
+    .join('\n')}`;
 
   return `
 ${identity}
 
-${projects}
+${agents}
+
+${cvProjects}
+
+${writing}
+
 ${highlights}
 
 ${skills}

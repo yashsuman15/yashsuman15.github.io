@@ -1,13 +1,32 @@
 export function Footer() {
+  const year = new Date().getFullYear();
+
   return (
     <footer>
-      <span className="footer-copy">
-        &copy; 2026 YASH SUMAN // ALL RIGHTS RESERVED 
-      </span>
-      <span className="footer-logo">Y.AI</span>
-      <a href="#hero" className="footer-scroll">
-        {'\u2191'} BACK TO TOP
-      </a>
+      <span>&copy; {year} Yash Suman</span>
+      <div className="footer-links">
+        <a
+          href="https://www.linkedin.com/in/yash-raj-suman/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          LinkedIn
+        </a>
+        <a
+          href="https://github.com/yashsuman15"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
+        </a>
+        <a
+          href="https://x.com/yashsuman69"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          X
+        </a>
+      </div>
     </footer>
   );
 }

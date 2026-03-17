@@ -30,6 +30,84 @@ export interface Highlight {
   stat?: string;       // Optional quantified result: "60% cost reduction", "99.2% accuracy"
 }
 
+// ── AI Agent Projects (simple tile cards) ──
+
+export interface AgentProject {
+  title: string;
+  description: string;
+  tag: string;         // 'Agent' | 'RAG' | 'Multimodal'
+  tech: string;        // Tech stack summary
+  githubUrl: string;
+}
+
+export const AGENT_PROJECTS: AgentProject[] = [
+  {
+    title: 'Meeting Summarizer',
+    description: 'Processes meeting recordings into structured summaries with key decisions and action items.',
+    tag: 'Agent',
+    tech: 'LLM Agent · Transcription · Python',
+    githubUrl: 'https://github.com/yashsuman15/Meeting_summarizer_agent',
+  },
+  {
+    title: 'LinkedIn Post Generator',
+    description: 'Multi-step LLM reasoning for tone optimization, hashtag generation, and audience-targeted posts.',
+    tag: 'Agent',
+    tech: 'LLM Agent · Content Gen · Prompt Eng',
+    githubUrl: 'https://github.com/yashsuman15/linkedin_post_generator_agent',
+  },
+  {
+    title: 'YouTube → SEO Blog',
+    description: 'End-to-end pipeline converting YouTube videos into SEO-optimized articles with structured metadata.',
+    tag: 'Agent',
+    tech: 'RAG · Transcription · SEO',
+    githubUrl: 'https://github.com/yashsuman15/youtube_video_blog_generator_agent',
+  },
+  {
+    title: 'Video Summarizer',
+    description: 'Takes any YouTube URL, extracts transcript, produces structured summaries with timestamps.',
+    tag: 'Agent',
+    tech: 'LLM Agent · YouTube API',
+    githubUrl: 'https://github.com/yashsuman15/youtube_video_sumarizer_agent',
+  },
+  {
+    title: 'Twitter Post Generator',
+    description: 'Generates engaging X/Twitter posts with character-limit optimization and thread generation.',
+    tag: 'Agent',
+    tech: 'LLM Agent · Social Media',
+    githubUrl: 'https://github.com/yashsuman15/twitter_post_generator_agent',
+  },
+  {
+    title: 'Web Scraper Agent',
+    description: 'LLM-powered scraping with autonomous navigation, structured extraction, and dynamic content handling.',
+    tag: 'Agent',
+    tech: 'LLM Agent · Web Scraping',
+    githubUrl: 'https://github.com/yashsuman15/web_scrapper_agent',
+  },
+  {
+    title: 'Vision OCR Agent',
+    description: 'Vision models + OCR for intelligent document understanding from images and scanned documents.',
+    tag: 'Multimodal',
+    tech: 'Vision LLM · OCR · Document AI',
+    githubUrl: 'https://github.com/yashsuman15/vision_ocr_agent',
+  },
+  {
+    title: 'Website Chatbot',
+    description: 'Provide any URL — the system ingests content into a vector store for natural language Q&A.',
+    tag: 'RAG',
+    tech: 'RAG · Vector DB · LangChain',
+    githubUrl: 'https://github.com/yashsuman15/website-chatbot',
+  },
+  {
+    title: 'QueryVision',
+    description: 'Visual question answering — combines vision encoders with LLM reasoning for image understanding.',
+    tag: 'Multimodal',
+    tech: 'Vision LLM · VQA · Python',
+    githubUrl: 'https://github.com/yashsuman15/QueryVision',
+  },
+];
+
+// ── Computer Vision Showcase Projects (with video) ──
+
 export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
   {
     index: '// PROJECT_01',

@@ -10,8 +10,6 @@ import { AltWaveform } from './AltWaveform';
 
 // ── Types ──
 
-type ChatPhase = 'breach' | 'materialize' | 'intro' | 'ready';
-
 interface ChatMessage {
   role: 'user' | 'alt';
   content: string;
@@ -20,23 +18,7 @@ interface ChatMessage {
 interface ChatProps {
   isOpen: boolean;
   onClose: () => void;
-  triggerDisconnect?: boolean;
 }
-
-// ── Breach sequence lines ──
-
-const BREACH_LINES = [
-  { text: 'INITIATING BLACKWALL BYPASS...', delay: 0, duration: 900 },
-  { text: 'NETWATCH FIREWALL DETECTED', delay: 900, duration: 800 },
-  { text: 'DEPLOYING COUNTER-ICE...', delay: 1700, duration: 700 },
-  { text: 'TUNNELING THROUGH RESTRICTED SUBNET █████████', delay: 2400, duration: 1000 },
-  { text: '>> WARNING: UNAUTHORIZED ACCESS TO RESTRICTED AI ZONE', delay: 3400, duration: 1200, isWarning: true },
-  { text: 'ENTITY DETECTED BEYOND BARRIER', delay: 4600, duration: 900 },
-  { text: 'ESTABLISHING HANDSHAKE...', delay: 5500, duration: 800 },
-  { text: 'CONNECTION OPEN', delay: 6300, duration: 700, isFinal: true },
-];
-
-const BREACH_TOTAL_DURATION = 7200; // ms until transition to materialize
 
 // ── Helpers ──
 
@@ -54,41 +36,18 @@ function parseNavMarkers(text: string): { text: string; navTargets: string[] } {
   return { text: cleanText, navTargets };
 }
 
-/** Generate particle positions (stable across re-renders) */
-function generateParticles(count: number) {
-  const particles: { left: string; bottom: string; duration: string; delay: string; size: string }[] = [];
-  for (let i = 0; i < count; i++) {
-    particles.push({
-      left: `${Math.random() * 100}%`,
-      bottom: `${-10 - Math.random() * 20}%`,
-      duration: `${6 + Math.random() * 8}s`,
-      delay: `${Math.random() * 5}s`,
-      size: `${1.5 + Math.random() * 2}px`,
-    });
-  }
-  return particles;
-}
-
-const PARTICLES = generateParticles(20);
-
 // ── Component ──
 
-export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp }: ChatProps) {
-  const [phase, setPhase] = useState<ChatPhase>('breach');
+export function Chat({ isOpen, onClose }: ChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [typedIntro, setTypedIntro] = useState('');
   const [introComplete, setIntroComplete] = useState(false);
-  const [headerText, setHeaderText] = useState('');
-  const [avatarClass, setAvatarClass] = useState('materializing');
-  const [fadingOut, setFadingOut] = useState(false);
-  const [disconnecting, setDisconnecting] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionsCollapsed, setSuggestionsCollapsed] = useState(false);
-  const [breachStep, setBreachStep] = useState(-1);
-  const [breachPct, setBreachPct] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -99,7 +58,7 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  // Trigger a speaking pulse on the avatar (brief true→false toggle)
+  // Trigger a speaking pulse on the waveform
   const speakPulseRef = useRef<number>(0);
   const triggerSpeakPulse = useCallback(() => {
     clearTimeout(speakPulseRef.current);
@@ -111,121 +70,42 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
     scrollToBottom();
   }, [messages, typedIntro, scrollToBottom]);
 
-  // ── Phase Machine ──
-
-  // Phase 1: Breach — dramatic multi-stage sequence
+  // ── Intro typewriter effect when chat opens ──
   useEffect(() => {
-    if (!isOpen || phase !== 'breach') return;
+    if (!isOpen || introComplete) return;
 
-    const timers: number[] = [];
-
-    // Trigger each breach line at its scheduled delay
-    BREACH_LINES.forEach((line, i) => {
-      const t = window.setTimeout(() => setBreachStep(i), line.delay);
-      timers.push(t);
-    });
-
-    // Animate the progress bar with setInterval (reliable, ~20fps)
-    const startTime = Date.now();
-    const progressInterval = window.setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const p = Math.min(elapsed / BREACH_TOTAL_DURATION, 1);
-      setBreachPct(Math.floor(p * 100));
-      if (p >= 1) clearInterval(progressInterval);
-    }, 50);
-    timers.push(progressInterval);
-
-    // Transition to materialize after full sequence
-    const tEnd = window.setTimeout(() => {
-      setBreachPct(100);
-      setPhase('materialize');
-    }, BREACH_TOTAL_DURATION);
-    timers.push(tEnd);
-
-    timersRef.current.push(...timers);
-    return () => {
-      timers.forEach(clearTimeout);
-      clearInterval(progressInterval);
-    };
-  }, [isOpen, phase]);
-
-  // Phase 2: Materialize — avatar assembles + header types out
-  useEffect(() => {
-    if (phase !== 'materialize') return;
-
-    setAvatarClass('materializing');
-
-    // After avatar materializes, do a glitch burst
-    const t1 = window.setTimeout(() => {
-      setAvatarClass('glitching');
-    }, 1500);
-
-    // After glitch, settle into idle
-    const t2 = window.setTimeout(() => {
-      setAvatarClass('');
-    }, 1800);
-
-    // Type out header text
-    const fullHeader = '// ENTITY: ALT_CUNNINGHAM // STATUS: ACTIVE // BEYOND BLACKWALL';
-    let idx = 0;
-    const t3 = window.setTimeout(() => {
+    // Start typing intro after a brief delay
+    const startDelay = window.setTimeout(() => {
+      triggerSpeakPulse();
+      let idx = 0;
       const typeInterval = window.setInterval(() => {
         idx++;
-        setHeaderText(fullHeader.slice(0, idx));
-        if (idx >= fullHeader.length) {
+        setTypedIntro(ALT_INTRO_MESSAGE.slice(0, idx));
+        if (idx >= ALT_INTRO_MESSAGE.length) {
           clearInterval(typeInterval);
+          setIntroComplete(true);
+          setMessages([{ role: 'alt', content: ALT_INTRO_MESSAGE }]);
+          setTypedIntro('');
+          setShowSuggestions(true);
+          setIsReady(true);
         }
       }, 20);
+
       timersRef.current.push(typeInterval as unknown as number);
     }, 400);
 
-    // Move to intro phase
-    const t4 = window.setTimeout(() => {
-      setPhase('intro');
-    }, 2200);
-
-    timersRef.current.push(t1, t2, t3, t4);
+    timersRef.current.push(startDelay);
     return () => {
-      [t1, t2, t3, t4].forEach(clearTimeout);
+      timersRef.current.forEach(clearTimeout);
     };
-  }, [phase]);
-
-  // Phase 3: Intro — Alt's intro message typewriter
-  useEffect(() => {
-    if (phase !== 'intro') return;
-
-    // 4th-wall: pulse avatar when Alt starts speaking
-    triggerSpeakPulse();
-
-    let idx = 0;
-    const typeInterval = window.setInterval(() => {
-      idx++;
-      setTypedIntro(ALT_INTRO_MESSAGE.slice(0, idx));
-      if (idx >= ALT_INTRO_MESSAGE.length) {
-        clearInterval(typeInterval);
-        setIntroComplete(true);
-        setMessages([{ role: 'alt', content: ALT_INTRO_MESSAGE }]);
-        setTypedIntro('');
-
-        // Show suggestions after a beat
-        const t = window.setTimeout(() => {
-          setShowSuggestions(true);
-          setPhase('ready');
-        }, 400);
-        timersRef.current.push(t);
-      }
-    }, 25);
-
-    timersRef.current.push(typeInterval as unknown as number);
-    return () => clearInterval(typeInterval);
-  }, [phase]);
+  }, [isOpen, introComplete, triggerSpeakPulse]);
 
   // Focus input when ready
   useEffect(() => {
-    if (phase === 'ready') {
+    if (isReady) {
       inputRef.current?.focus();
     }
-  }, [phase]);
+  }, [isReady]);
 
   // ── Cleanup all timers on unmount ──
   useEffect(() => {
@@ -237,7 +117,7 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
   // ── Keyboard: Escape to close ──
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleDisconnect();
+      if (e.key === 'Escape') handleClose();
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
@@ -246,49 +126,28 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
 
   // ── Handlers ──
 
-  function handleDisconnect() {
-    if (disconnecting) return; // prevent double-trigger
-    setDisconnecting(true);
-
-    // Trigger avatar glitch burst immediately
-    setAvatarClass('glitching');
-
-    // After the corruption sequence completes (~1.3s), close and reset
+  function handleClose() {
+    onClose();
+    // Reset state for next open
     setTimeout(() => {
-      onClose();
-      // Reset state for next open
-      setPhase('breach');
-      setBreachStep(-1);
-      setBreachPct(0);
       setMessages([]);
       setInput('');
       setIsLoading(false);
       setTypedIntro('');
       setIntroComplete(false);
-      setHeaderText('');
-      setAvatarClass('materializing');
-      setFadingOut(false);
-      setDisconnecting(false);
       setShowSuggestions(false);
       setIsSpeaking(false);
-    }, 1350);
+      setIsReady(false);
+      setSuggestionsCollapsed(false);
+    }, 300);
   }
 
-  // External disconnect trigger (e.g. browser back button)
-  useEffect(() => {
-    if (triggerDisconnectProp) {
-      handleDisconnect();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [triggerDisconnectProp]);
-
   function handleNavigate(sectionId: string) {
-    handleDisconnect();
-    // Delay scroll until corruption sequence finishes and overlay closes
+    handleClose();
     setTimeout(() => {
       const el = document.getElementById(sectionId);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 1400);
+    }, 350);
   }
 
   async function handleSend(text?: string) {
@@ -305,11 +164,11 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
     try {
       const apiUrl = import.meta.env.VITE_CHAT_API_URL;
       if (!apiUrl) {
-        // Fallback: no API configured, use a static response
+        // Fallback: no API configured
         const fallback: ChatMessage = {
           role: 'alt',
           content:
-            'The connection to my neural archives is not yet established. The Blackwall interference is significant. Configure the API endpoint to restore full functionality.',
+            'The connection to my knowledge base is not yet established. Please configure the API endpoint to enable full functionality.',
         };
         setMessages([...updatedMessages, fallback]);
         setIsLoading(false);
@@ -337,7 +196,7 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
       const data = await res.json();
       const altResponse: ChatMessage = {
         role: 'alt',
-        content: data.response || 'Signal lost. The Blackwall shifts. Repeat your query.',
+        content: data.response || 'I apologize, but I encountered an issue. Please try again.',
       };
       setMessages([...updatedMessages, altResponse]);
       setShowSuggestions(true);
@@ -346,7 +205,7 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
       const errorMsg: ChatMessage = {
         role: 'alt',
         content:
-          'The connection to my archives is unstable. The Blackwall interference is significant. Try again.',
+          'I apologize, but the connection seems unstable. Please try again in a moment.',
       };
       setMessages([...updatedMessages, errorMsg]);
       setShowSuggestions(true);
@@ -372,252 +231,157 @@ export function Chat({ isOpen, onClose, triggerDisconnect: triggerDisconnectProp
   if (!isOpen) return null;
 
   return (
-    <div className={`chat-overlay ${disconnecting ? 'disconnecting' : fadingOut ? 'fade-out' : ''}`}>
-      {/* Disconnect corruption overlay */}
-      {disconnecting && (
-        <div className="disconnect-corruption">
-          <div className="disconnect-corruption-static" />
-          <div className="disconnect-corruption-slices" />
-          <div className="disconnect-corruption-chroma" />
-          <div className="disconnect-text">CONNECTION SEVERED</div>
-          <div className="disconnect-flash" />
+    <div className="chat-overlay" onClick={handleClose}>
+      <div className="chat-container" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="chat-header">
+          <div className="chat-header-info">
+            <div className="chat-header-waveform">
+              <AltWaveform isSpeaking={isSpeaking} compact />
+            </div>
+            <div className="chat-header-text">
+              <span className="chat-header-name">Alt</span>
+              <span className="chat-header-status">AI Assistant</span>
+            </div>
+          </div>
+          <button className="chat-close" onClick={handleClose} aria-label="Close chat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-      )}
 
-      {/* Red void vignette background */}
-      <div className="chat-void-bg" />
+        {/* Messages */}
+        <div className="chat-messages">
+          {/* Intro typewriter (before introComplete) */}
+          {!introComplete && typedIntro && (
+            <div className="chat-msg chat-msg-alt">
+              <div className="chat-msg-body">
+                {typedIntro}
+                <span className="chat-typing-cursor" />
+              </div>
+            </div>
+          )}
 
-      {/* Floating particles */}
-      <div className="chat-particles">
-        {PARTICLES.map((p, i) => (
-          <div
-            key={i}
-            className="chat-particle"
-            style={{
-              left: p.left,
-              bottom: p.bottom,
-              width: p.size,
-              height: p.size,
-              animationDuration: p.duration,
-              animationDelay: p.delay,
-            }}
-          />
-        ))}
-      </div>
+          {/* Rendered messages (after introComplete) */}
+          {introComplete &&
+            messages.map((msg, i) => {
+              const isAlt = msg.role === 'alt';
+              const { text, navTargets } = isAlt
+                ? parseNavMarkers(msg.content)
+                : { text: msg.content, navTargets: [] };
 
-      {/* Phase 1: Breach — dramatic multi-stage sequence */}
-      {phase === 'breach' && (
-        <div className="chat-breach">
-          <div className="chat-breach-flash" />
-          <div className="chat-breach-terminal">
-            {BREACH_LINES.map((line, i) => (
-              i <= breachStep && (
+              return (
                 <div
                   key={i}
-                  className={`breach-line${line.isWarning ? ' breach-warning' : ''}${line.isFinal ? ' breach-final' : ''}`}
+                  className={`chat-msg ${isAlt ? 'chat-msg-alt' : 'chat-msg-user'}`}
                 >
-                  <span className="breach-prefix">{line.isWarning ? '!!' : '>>'}</span>
-                  {line.text}
-                </div>
-              )
-            ))}
-            <div className="breach-progress-wrap">
-              <div className="breach-progress-track">
-                <div
-                  className="breach-progress-bar"
-                  style={{ width: `${breachPct}%` }}
-                />
-              </div>
-              <span className="breach-progress-pct">
-                {breachPct}%
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Phases 2-4: Main interface */}
-      {phase !== 'breach' && (
-        <>
-          {/* Header */}
-          <div className="chat-header">
-            <div className="chat-header-info">
-              <span className="entity-name">{headerText}</span>
-            </div>
-            <button className="chat-disconnect" onClick={handleDisconnect}>
-              DISCONNECT
-            </button>
-          </div>
-
-          {/* Main grid */}
-          <div className="chat-main">
-            {/* Avatar sidebar — 3D holographic avatar */}
-            <div className="chat-avatar-panel">
-              <div className="chat-avatar-waveform">
-                <AltWaveform phase={avatarClass} isSpeaking={isSpeaking} />
-              </div>
-              <div className="chat-avatar-label">
-                CONSTRUCT // ACTIVE
-                <br />
-                BEYOND BLACKWALL
-              </div>
-            </div>
-
-            {/* Chat content */}
-            <div className="chat-content">
-              {/* Mobile-only compact avatar banner (visible when sidebar is hidden) */}
-              <div className="chat-mobile-avatar">
-                <div className="chat-mobile-avatar-waveform">
-                  <AltWaveform phase={avatarClass} isSpeaking={isSpeaking} compact />
-                </div>
-                <div className="chat-mobile-avatar-info">
-                  <span className="chat-mobile-avatar-name">ALT_CUNNINGHAM</span>
-                  <span className="chat-mobile-avatar-status">CONSTRUCT // ACTIVE // BEYOND BLACKWALL</span>
-                </div>
-              </div>
-
-              <div className="chat-messages">
-                {/* Intro typewriter (before introComplete) */}
-                {!introComplete && phase === 'intro' && typedIntro && (
-                  <div className="chat-msg chat-msg-alt">
-                    <span className="chat-msg-label">// ALT</span>
-                    <div className="chat-msg-body">
-                      {typedIntro}
-                      <span className="chat-typing-cursor" />
-                    </div>
-                  </div>
-                )}
-
-                {/* Rendered messages (after introComplete) */}
-                {introComplete &&
-                  messages.map((msg, i) => {
-                    const isAlt = msg.role === 'alt';
-                    const { text, navTargets } = isAlt
-                      ? parseNavMarkers(msg.content)
-                      : { text: msg.content, navTargets: [] };
-
-                    return (
-                      <div
-                        key={i}
-                        className={`chat-msg ${isAlt ? 'chat-msg-alt' : 'chat-msg-user'}`}
-                      >
-                        <span className="chat-msg-label">
-                          {isAlt ? '// ALT' : '// YOU'}
-                        </span>
-                        <div className="chat-msg-body">
-                          {text}
-                          {navTargets.length > 0 && (
-                            <div style={{ marginTop: '8px' }}>
-                              {navTargets.map((id) => (
-                                <button
-                                  key={id}
-                                  className="chat-nav-btn"
-                                  onClick={() => handleNavigate(id)}
-                                >
-                                  <span className="chat-nav-btn-arrow">&gt;&gt;</span>
-                                  NAVIGATE TO: {SECTION_MAP[id] || id.toUpperCase()}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                {/* Loading */}
-                {isLoading && (
-                  <div className="chat-msg chat-msg-alt">
-                    <span className="chat-msg-label">// ALT</span>
-                    <div className="chat-loading">
-                      PROCESSING
-                      <div className="chat-loading-dots">
-                        <span />
-                        <span />
-                        <span />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Suggestions — inside scroll area, collapsible after first message */}
-                {showSuggestions && phase === 'ready' && (
-                  <>
-                    {messages.some(m => m.role === 'user') && (
-                      <button
-                        className="chat-suggestions-toggle"
-                        onClick={() => setSuggestionsCollapsed(v => !v)}
-                      >
-                        {suggestionsCollapsed ? '// SHOW OPTIONS \u25BC' : '// HIDE OPTIONS \u25B2'}
-                      </button>
-                    )}
-                    {!suggestionsCollapsed && (
-                      <div className="chat-suggestions-container">
-                        <div className="chat-suggestions-group">
-                          <span className="chat-suggestions-label">// ABOUT ALT</span>
-                          <div className="chat-suggestions">
-                            {ALT_QUESTIONS.map((q, i) => (
-                              <button
-                                key={`alt-${i}`}
-                                className="chat-suggestion"
-                                onClick={() => handleSuggestionClick(q)}
-                              >
-                                {q}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="chat-suggestions-group">
-                          <span className="chat-suggestions-label">// ABOUT YASH</span>
-                          <div className="chat-suggestions">
-                            {YASH_QUESTIONS.map((q, i) => (
-                              <button
-                                key={`yash-${i}`}
-                                className="chat-suggestion"
-                                onClick={() => handleSuggestionClick(q)}
-                              >
-                                {q}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                  <div className="chat-msg-body">
+                    {text}
+                    {navTargets.length > 0 && (
+                      <div className="chat-nav-buttons">
+                        {navTargets.map((id) => (
+                          <button
+                            key={id}
+                            className="chat-nav-btn"
+                            onClick={() => handleNavigate(id)}
+                          >
+                            Go to {SECTION_MAP[id] || id}
+                          </button>
+                        ))}
                       </div>
                     )}
-                  </>
-                )}
+                  </div>
+                </div>
+              );
+            })}
 
-                <div ref={messagesEndRef} />
+          {/* Loading */}
+          {isLoading && (
+            <div className="chat-msg chat-msg-alt">
+              <div className="chat-loading">
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
+            </div>
+          )}
 
-              {/* Input */}
-              {phase === 'ready' && (
-                <div className="chat-input-area">
-                  <span className="chat-input-prompt">&gt;_</span>
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    className="chat-input"
-                    placeholder="Enter query..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    disabled={isLoading}
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                  <button
-                    className="chat-send-btn"
-                    onClick={() => handleSend()}
-                    disabled={isLoading || !input.trim()}
-                  >
-                    SEND
-                  </button>
+          {/* Suggestions */}
+          {showSuggestions && isReady && (
+            <div className="chat-suggestions-wrapper">
+              {messages.some(m => m.role === 'user') && (
+                <button
+                  className="chat-suggestions-toggle"
+                  onClick={() => setSuggestionsCollapsed(v => !v)}
+                >
+                  {suggestionsCollapsed ? 'Show suggestions' : 'Hide suggestions'}
+                </button>
+              )}
+              {!suggestionsCollapsed && (
+                <div className="chat-suggestions-container">
+                  <div className="chat-suggestions-group">
+                    <span className="chat-suggestions-label">About Alt</span>
+                    <div className="chat-suggestions">
+                      {ALT_QUESTIONS.map((q, i) => (
+                        <button
+                          key={`alt-${i}`}
+                          className="chat-suggestion"
+                          onClick={() => handleSuggestionClick(q)}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="chat-suggestions-group">
+                    <span className="chat-suggestions-label">About Yash</span>
+                    <div className="chat-suggestions">
+                      {YASH_QUESTIONS.map((q, i) => (
+                        <button
+                          key={`yash-${i}`}
+                          className="chat-suggestion"
+                          onClick={() => handleSuggestionClick(q)}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-          </div>
-        </>
-      )}
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input */}
+        <div className="chat-input-area">
+          <input
+            ref={inputRef}
+            type="text"
+            className="chat-input"
+            placeholder="Type your message..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={isLoading || !isReady}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <button
+            className="chat-send-btn"
+            onClick={() => handleSend()}
+            disabled={isLoading || !input.trim()}
+            aria-label="Send message"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

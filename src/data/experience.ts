@@ -1,20 +1,29 @@
+// ── Experience Data ──
+// Work history with expandable bullet points
+
 export interface ExperienceItem {
-  date: string;
   role: string;
   company: string;
-  description: string;
-  dotColor: string;
-  dotShadow: string;
+  location: string;
+  dateRange: string;
+  summary: string;
+  bullets: string[];
 }
 
 export const EXPERIENCE: ExperienceItem[] = [
   {
-    date: 'MARCH 2025 \u2014 PRESENT',
-    role: 'AI ENGINEER',
-    company: '\u25c8 LABELLERR AI // CHANDIGARH',
-    description:
-      'Built and deployed multiple computer vision pipelines, researched and benchmarked various CV models, performed POCs across domains like manufacturing, surveillance, and smart cities, developed RAG-based AI agents, and contributed to the Labellerr Python SDK — now serving 500+ developers.',
-    dotColor: '#00F5FF',
-    dotShadow: '0 0 16px rgba(0,245,255,0.6)',
+    role: 'AI Engineer',
+    company: 'Labellerr AI',
+    location: 'Chandigarh',
+    dateRange: 'Mar 2025 — Present',
+    summary:
+      'Building and deploying computer vision pipelines and RAG-based AI agents for industrial applications across manufacturing, surveillance, and smart city domains.',
+    bullets: [
+      'Built and deployed multiple CV pipelines for production use across diverse industry verticals',
+      'Researched and benchmarked YOLO, RTDETR, and SAM models for domain-specific optimization',
+      'Developed RAG-based AI agents for intelligent document processing and knowledge retrieval',
+      'Contributed to the Labellerr Python SDK serving 500+ developers',
+      'Created 25+ technical articles and 5+ video tutorials for the company blog and YouTube',
+    ],
   },
 ];

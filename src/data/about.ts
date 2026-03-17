@@ -1,13 +1,9 @@
 // ── About / Profile Data ──
-// Single source of truth for bio, augmentations, and hero stats.
-// Used by About.tsx, Hero.tsx (optionally), and chatContext.ts (auto-generated prompt).
+// Single source of truth for bio, proficiency bars, and hero stats.
 
-export interface Augmentation {
+export interface Proficiency {
   name: string;
-  /** CSS width value, e.g. '97%' */
-  width: string;
-  /** CSS animation-delay value */
-  delay: string;
+  percentage: number;
 }
 
 export interface HeroStat {
@@ -17,37 +13,92 @@ export interface HeroStat {
 
 // ── Identity ──
 
-export const ENGINEER_NAME = 'Yash Raj Suman';
-export const ENGINEER_ALIAS = 'Yash';
+export const ENGINEER_NAME = 'Yash Suman';
+export const ENGINEER_ROLE = 'AI Engineer';
 export const ENGINEER_ROLES = ['AI Engineer', 'Computer Vision Engineer', 'Gen-AI Engineer'];
 
-// ── Bio paragraphs (rendered in About section) ──
+// ── Hero content ──
 
-export const BIO_PARAGRAPHS: string[] = [
-  "I build AI systems that don't just process data — they perceive, reason, and take action. From real-time computer vision pipelines running on live camera feeds to autonomous agents that reason over documents, data, and tools, I work across the full stack: fine-tuning detection models for industrial deployments, architecting RAG systems for enterprise knowledge retrieval, and building agent workflows that handle complex multi-step tasks end to end.",
-  "On the vision side, I fine-tune YOLO, RTDETR, and many other vision models on domain-specific datasets for things like manufacturing QC, surveillance, traffic analysis, and smart city infrastructure — everything built to run in real time with production-grade accuracy.", 
-  "On the Agentic side, I design LLM-powered agents and retrieval pipelines that turn messy, unstructured data into something actually useful.",
-  "My project demos alone have reached up 1,000,000+ views across Reddit and YouTube.",
-];
-
-// ── Short bio for chat context (combines the essence of the 3 paragraphs) ──
-
-export const BIO_SUMMARY =
-  'AI Engineer building real-time computer vision pipelines and LLM-powered agentic systems — fine-tuning detection and segmentation models for industrial deployments like manufacturing QC, surveillance, and traffic analysis, while designing autonomous agents and RAG pipelines that turn unstructured data into actionable intelligence. Currently at Labellerr AI, with 1,000,000+ views on project demos across Reddit and YouTube.';
-
-// ── Neural augmentation bars (About section skill bars) ──
-
-export const AUGMENTATIONS: Augmentation[] = [
-  { name: 'Python', width: '97%', delay: '0s' },
-  { name: 'Computer Vision', width: '91%', delay: '.2s' },
-  { name: 'GEN AI', width: '94%', delay: '.4s' },
-  { name: 'AI AGENTS', width: '88%', delay: '.6s' },
-];
+export const HERO_HEADLINE = 'I build LLM-powered systems & autonomous AI agents.';
+export const HERO_SUBTITLE =
+  'Specializing in RAG pipelines, multi-agent orchestration, and production-grade AI systems that reason, retrieve, and act.';
 
 // ── Hero stats ──
 
 export const HERO_STATS: HeroStat[] = [
-  { value: '10+', label: 'PROJECTS DONE' },
-  { value: '100+', label: 'MODELS FINETUNED & TRAINED' },
-  { value: '1 Million +', label: 'PROJECT IMPRESSIONS' },
+  { value: '10+', label: 'Projects shipped' },
+  { value: '100+', label: 'Models trained' },
+  { value: '1M+', label: 'Demo views' },
 ];
+
+// ── Proficiency bars (Skills section) ──
+
+export const PROFICIENCIES: Proficiency[] = [
+  { name: 'Python', percentage: 97 },
+  { name: 'Gen AI', percentage: 94 },
+  { name: 'Computer Vision', percentage: 91 },
+  { name: 'AI Agents', percentage: 88 },
+];
+
+// ── Skill columns (4-column layout in Skills section) ──
+
+export interface SkillColumn {
+  title: string;
+  items: string[];
+}
+
+export const SKILL_COLUMNS: SkillColumn[] = [
+  {
+    title: 'Large Language Models',
+    items: [
+      'Hugging Face & Transformers',
+      'GPT / LLaMA / Ollama',
+      'Fine-tuning (PEFT, LoRA)',
+      'Quantization & Optimization',
+      'Prompt Engineering',
+    ],
+  },
+  {
+    title: 'Computer Vision',
+    items: [
+      'YOLO Series (v8, v12)',
+      'RTDETR / RTDETRv2',
+      'SAM Series',
+      'Object Tracking',
+      'ONNX / TensorRT / OpenCV',
+    ],
+  },
+  {
+    title: 'AI Agents & RAG',
+    items: [
+      'LangChain / LangGraph',
+      'AutoGen / CrewAI / smolagents',
+      'Tool Calling & MCP',
+      'RAG Pipelines',
+      'n8n Automation',
+    ],
+  },
+  {
+    title: 'MLOps & Data',
+    items: [
+      'Docker & MLflow',
+      'FastAPI',
+      'Spark / Kafka / dbt',
+      'Git & CI/CD',
+      'SQL & Vector Databases',
+    ],
+  },
+];
+
+// ── Bio paragraphs (About section) ──
+
+export const BIO_PARAGRAPHS: string[] = [
+  "I'm an AI Engineer specializing in building production-grade computer vision systems and LLM-powered autonomous agents. My work focuses on turning cutting-edge AI research into real-world solutions that run reliably at scale.",
+  "Currently at Labellerr AI, I design and deploy vision pipelines for industrial applications — from manufacturing quality control and pharmaceutical automation to surveillance systems and smart city infrastructure. I also build RAG pipelines and multi-agent systems that transform unstructured data into actionable intelligence.",
+  "My projects have reached over 1 million views across Reddit and YouTube, demonstrating real-time AI running on live data. I believe in shipping systems that work in production, not just demos that look good in notebooks.",
+];
+
+// ── Short bio for chat context ──
+
+export const BIO_SUMMARY =
+  'AI Engineer building real-time computer vision pipelines and LLM-powered agentic systems — fine-tuning detection and segmentation models for industrial deployments like manufacturing QC, surveillance, and traffic analysis, while designing autonomous agents and RAG pipelines that turn unstructured data into actionable intelligence. Currently at Labellerr AI, with 1M+ views on project demos across Reddit and YouTube.';

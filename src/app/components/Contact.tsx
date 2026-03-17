@@ -18,19 +18,13 @@ export function Contact() {
     // Client-side validation
     if (!name.trim() || !email.trim() || !message.trim()) {
       setStatus('error');
-      setErrorMsg('ALL FIELDS ARE REQUIRED.');
+      setErrorMsg('All fields are required.');
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setStatus('error');
-      setErrorMsg('INVALID EMAIL FORMAT.');
-      return;
-    }
-
-    if (!formspreeId || formspreeId === 'your_form_id_here') {
-      setStatus('error');
-      setErrorMsg('CONTACT FORM NOT CONFIGURED. SET VITE_FORMSPREE_ID IN .env.local');
+      setErrorMsg('Please enter a valid email address.');
       return;
     }
 
@@ -52,74 +46,77 @@ export function Contact() {
       } else {
         const data = await res.json();
         setStatus('error');
-        setErrorMsg(data?.errors?.[0]?.message?.toUpperCase() || 'TRANSMISSION FAILED. TRY AGAIN.');
+        setErrorMsg(data?.errors?.[0]?.message || 'Failed to send message. Please try again.');
       }
     } catch {
       setStatus('error');
-      setErrorMsg('NETWORK ERROR. CHECK YOUR CONNECTION.');
+      setErrorMsg('Network error. Please check your connection.');
     }
   }
 
   return (
-    <section id="contact">
-      <div className="contact-glow" />
+    <section id="contact" className="section section-alt">
       <div className="section-header">
-        <span className="section-num">05</span>
-        <h2 className="section-title">OPEN A CHANNEL</h2>
-        <div className="section-line" />
+        <h2>Get in Touch</h2>
+        <p className="section-sub">Have a project in mind? Let's talk.</p>
       </div>
+
       <div className="contact-grid">
+        {/* Contact Info */}
         <div className="contact-info">
-          <h3>
-            JACK IN &amp;<br />
-            LET'S BUILD.
-          </h3>
+          <h3>Let's build something together.</h3>
           <p>
-            Got a high-risk gig? An AI system that needs cracking, building, or
-            bulletproofing? Drop me a ping. I work with corps, startups, and the
-            occasional rogue AI collective.
+            Whether you need computer vision pipelines, LLM-powered agents, RAG systems,
+            or end-to-end AI infrastructure — I'm ready to help bring your ideas to life.
           </p>
           <div className="contact-links">
             {CONTACT_LINKS.map((link) => (
-              <a key={link.label} href={link.href} className="contact-link" target="_blank" rel="noopener noreferrer">
+              <a
+                key={link.label}
+                href={link.href}
+                className="contact-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span className="contact-link-icon">{link.icon}</span>
                 <span className="contact-link-text">{link.displayText}</span>
-                <span className="contact-link-label">{link.label}</span>
               </a>
             ))}
           </div>
         </div>
+
+        {/* Contact Form */}
         <form className="contact-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">// YOUR HANDLE</label>
+            <label className="form-label">Name</label>
             <input
               type="text"
               name="name"
               className="form-input"
-              placeholder="Street name or corp alias..."
+              placeholder="Your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={status === 'submitting'}
             />
           </div>
           <div className="form-group">
-            <label className="form-label">// ENCRYPTED CHANNEL</label>
+            <label className="form-label">Email</label>
             <input
               type="email"
               name="email"
               className="form-input"
-              placeholder="secure@channel.net"
+              placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={status === 'submitting'}
             />
           </div>
           <div className="form-group">
-            <label className="form-label">// MISSION BRIEF</label>
+            <label className="form-label">Message</label>
             <textarea
               name="message"
               className="form-textarea"
-              placeholder="Describe the gig. No job too strange..."
+              placeholder="Tell me about your project..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               disabled={status === 'submitting'}
@@ -128,22 +125,22 @@ export function Contact() {
 
           {status === 'error' && (
             <div className="form-status form-status-error">
-              <span>[ERROR]</span> {errorMsg}
+              {errorMsg}
             </div>
           )}
 
           {status === 'success' && (
             <div className="form-status form-status-success">
-              <span>[OK]</span> MESSAGE TRANSMITTED SUCCESSFULLY. I'LL RESPOND WITHIN 24H.
+              Message sent successfully! I'll get back to you within 24 hours.
             </div>
           )}
 
           <button
             type="submit"
-            className="form-btn"
+            className="btn-primary form-btn"
             disabled={status === 'submitting'}
           >
-            {status === 'submitting' ? 'TRANSMITTING...' : 'TRANSMIT MESSAGE'}
+            {status === 'submitting' ? 'Sending...' : 'Send Message'}
           </button>
         </form>
       </div>
