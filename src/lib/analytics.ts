@@ -20,7 +20,7 @@ export function initAnalytics() {
     persistence: 'memory', // Cookieless - no cookie banner needed
     capture_pageview: true,
     capture_pageleave: true,
-    autocapture: false, // We'll manually track important events
+    autocapture: true, // Auto-track all clicks, forms, etc.
   });
 
   console.log('[Analytics] PostHog initialized');
