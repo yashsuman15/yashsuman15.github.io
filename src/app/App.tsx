@@ -10,6 +10,7 @@ import { Skills } from './components/Skills';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { Chat } from './components/Chat';
+import { trackClick } from '@/lib/analytics';
 
 export default function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -77,22 +78,22 @@ export default function App() {
       <main>
         <Hero onOpenChat={openChat} />
         <Projects />
-        <About />
         <Writing />
         <Highlights />
         <Experience />
         <Skills />
+        <About />
         <Contact />
       </main>
 
       <Footer />
 
       {/* Floating chat button */}
-      <button className="chat-fab" onClick={openChat}>
+      <button className="chat-fab" onClick={() => { trackClick('chat_fab'); openChat(); }}>
         <svg className="chat-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
-        <span className="chat-fab-text">Chat with my AI Assistant</span>
+        <span className="chat-fab-text">AI Assistant Chatbot</span>
       </button>
 
       {/* Alt Chat Overlay */}

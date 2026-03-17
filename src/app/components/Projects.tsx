@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { AGENT_PROJECTS, SHOWCASE_PROJECTS } from '@/data/projects';
+import { trackProject, trackClick } from '@/lib/analytics';
 
 // Platform colors
 const PLATFORM_COLORS: Record<string, string> = {
@@ -38,6 +39,7 @@ export function Projects() {
               target="_blank"
               rel="noopener noreferrer"
               className="project-tile"
+              onClick={() => trackProject('agent_click', project.title, { github_url: project.githubUrl })}
             >
               <span className="tile-tag">{project.tag}</span>
               <h4>{project.title}</h4>
@@ -75,6 +77,7 @@ export function Projects() {
           target="_blank"
           rel="noopener noreferrer"
           className="btn-link"
+          onClick={() => trackClick('view_all_repositories')}
         >
           View all repositories &rarr;
         </a>
@@ -146,6 +149,7 @@ function CVShowcaseItem({ project }: { project: (typeof SHOWCASE_PROJECTS)[0] })
               rel="noopener noreferrer"
               className="cv-showcase-social-btn"
               style={{ '--platform-color': platformColor } as React.CSSProperties}
+              onClick={() => trackProject('social_click', project.title, { platform, url: socialUrl })}
             >
               <span className="social-icon">
                 {platform === 'reddit' && '▲'}
@@ -160,6 +164,7 @@ function CVShowcaseItem({ project }: { project: (typeof SHOWCASE_PROJECTS)[0] })
           target="_blank"
           rel="noopener noreferrer"
           className="cv-showcase-link"
+          onClick={() => trackProject('github_click', project.title, { github_url: project.githubLink })}
         >
           View on GitHub &rarr;
         </a>

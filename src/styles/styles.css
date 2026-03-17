@@ -153,6 +153,27 @@ nav {
   font-weight: 500;
 }
 
+.mobile-resume-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  padding: 14px 24px;
+  background: transparent;
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.mobile-resume-btn:hover {
+  background: var(--blue);
+  color: #000;
+}
+
 .mobile-menu-socials {
   display: flex;
   gap: 24px;
@@ -259,21 +280,40 @@ nav {
   display: inline-flex;
   align-items: center;
   padding: 14px 32px;
-  background: transparent;
-  color: var(--blue);
-  border: 1px solid var(--blue);
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: #fff;
+  border: none;
   border-radius: 980px;
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
   letter-spacing: -0.01em;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  box-shadow: 0 4px 20px rgba(41, 151, 255, 0.3);
 }
 
 .btn-secondary:hover {
-  background: var(--blue);
-  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(41, 151, 255, 0.45), 0 0 16px rgba(167, 139, 250, 0.3);
+}
+
+/* Smaller outline button for navigation bar (See Resume) */
+.nav-right .btn-secondary {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.nav-right .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-link {
@@ -1372,31 +1412,37 @@ footer {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--surface);
-  border: 0.5px solid var(--border);
-  padding: 12px 20px;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  border: none;
+  padding: 14px 24px;
   border-radius: 980px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 24px rgba(41, 151, 255, 0.4);
+  animation: fabPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes fabPulse {
+  0%, 100% { box-shadow: 0 4px 24px rgba(41, 151, 255, 0.4); }
+  50% { box-shadow: 0 8px 32px rgba(41, 151, 255, 0.6), 0 0 20px rgba(167, 139, 250, 0.3); }
 }
 
 .chat-fab:hover {
-  background: #161616;
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 36px rgba(41, 151, 255, 0.5), 0 0 24px rgba(167, 139, 250, 0.4);
+  animation: none;
 }
 
 .chat-fab-icon {
   width: 20px;
   height: 20px;
-  color: var(--blue);
+  color: #fff;
 }
 
 .chat-fab-text {
   font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text);
+  font-weight: 600;
+  color: #fff;
 }
 
 /* ===== WAVEFORM (Alt Avatar) ===== */
@@ -1515,11 +1561,17 @@ footer {
   footer { flex-direction: column; gap: 12px; text-align: center; }
   
   .chat-fab {
-    padding: 12px 16px;
+    padding: 14px;
+    border-radius: 50%;
   }
   
   .chat-fab-text {
     display: none;
+  }
+  
+  .chat-fab-icon {
+    width: 22px;
+    height: 22px;
   }
   
   .profile-image-wrap {

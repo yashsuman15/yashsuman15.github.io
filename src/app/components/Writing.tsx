@@ -1,4 +1,5 @@
 import { VIDEOS, ARTICLES, WRITING_STATS } from '@/data/writing';
+import { trackClick } from '@/lib/analytics';
 
 export function Writing() {
   return (
@@ -38,6 +39,7 @@ export function Writing() {
             target="_blank"
             rel="noopener noreferrer"
             className="video-tile"
+            onClick={() => trackClick('video_tile', { title: video.title, videoId: video.videoId })}
           >
             <div className="video-thumb">
               <img
@@ -68,6 +70,7 @@ export function Writing() {
             target="_blank"
             rel="noopener noreferrer"
             className="article-row"
+            onClick={() => trackClick('article_row', { title: article.title, category: article.category })}
           >
             <span className="article-date">{article.date}</span>
             <span className="article-title">{article.title}</span>
@@ -82,6 +85,7 @@ export function Writing() {
           target="_blank"
           rel="noopener noreferrer"
           className="btn-link"
+          onClick={() => trackClick('view_all_articles')}
         >
           View all articles &rarr;
         </a>

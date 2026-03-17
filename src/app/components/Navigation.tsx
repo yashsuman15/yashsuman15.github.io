@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { trackClick } from '@/lib/analytics';
 
 export function Navigation() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -25,6 +26,7 @@ export function Navigation() {
             target="_blank"
             rel="noopener noreferrer"
             className="nav-social"
+            onClick={() => trackClick('nav_linkedin')}
           >
             LinkedIn
           </a>
@@ -33,10 +35,20 @@ export function Navigation() {
             target="_blank"
             rel="noopener noreferrer"
             className="nav-social"
+            onClick={() => trackClick('nav_github')}
           >
             GitHub
           </a>
-          <a href="#contact" className="nav-cta">
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-secondary"
+            onClick={() => trackClick('see_resume')}
+          >
+            See Resume
+          </a>
+          <a href="#contact" className="nav-cta" onClick={() => trackClick('nav_get_in_touch')}>
             Get in touch
           </a>
         </div>
@@ -75,11 +87,21 @@ export function Navigation() {
         <a href="#contact" onClick={closeMenu}>
           Contact
         </a>
+        <a
+          href="/resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mobile-resume-btn"
+          onClick={() => { trackClick('see_resume_mobile'); closeMenu(); }}
+        >
+          See Resume
+        </a>
         <div className="mobile-menu-socials">
           <a
             href="https://www.linkedin.com/in/yash-raj-suman/"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackClick('mobile_linkedin')}
           >
             LinkedIn
           </a>
@@ -87,6 +109,7 @@ export function Navigation() {
             href="https://github.com/yashsuman15"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackClick('mobile_github')}
           >
             GitHub
           </a>
@@ -94,6 +117,7 @@ export function Navigation() {
             href="https://x.com/yashsuman69"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackClick('mobile_x')}
           >
             X
           </a>

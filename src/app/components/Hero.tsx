@@ -1,10 +1,20 @@
 import { ENGINEER_ROLE, HERO_HEADLINE, HERO_SUBTITLE, HERO_STATS } from '@/data/about';
+import { trackClick } from '@/lib/analytics';
 
 interface HeroProps {
   onOpenChat?: () => void;
 }
 
 export function Hero({ onOpenChat }: HeroProps) {
+  const handleSeeMyWork = () => {
+    trackClick('see_my_work');
+  };
+
+  const handleChatClick = () => {
+    trackClick('chat_button_hero');
+    onOpenChat?.();
+  };
+
   return (
     <section className="hero" id="hero">
       <div className="hero-inner">
@@ -17,11 +27,11 @@ export function Hero({ onOpenChat }: HeroProps) {
         <p className="hero-sub">{HERO_SUBTITLE}</p>
 
         <div className="hero-btns">
-          <a href="#projects" className="btn-primary">
+          <a href="#projects" className="btn-primary" onClick={handleSeeMyWork}>
             See my work
           </a>
-          <button className="btn-secondary" onClick={onOpenChat}>
-            Chat with my AI Assistant
+          <button className="btn-secondary" onClick={handleChatClick}>
+            AI Assistant Chatbot
           </button>
         </div>
 

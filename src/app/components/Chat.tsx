@@ -7,6 +7,7 @@ import {
   PORTFOLIO_CONTEXT,
 } from '@/data/chatContext';
 import { AltWaveform } from './AltWaveform';
+import { trackChat } from '@/lib/analytics';
 
 // ── Types ──
 
@@ -154,6 +155,9 @@ export function Chat({ isOpen, onClose }: ChatProps) {
     const msgText = (text || input).trim();
     if (!msgText || isLoading) return;
 
+    // Track message sent
+    trackChat('message_sent', { message_length: msgText.length });
+
     const userMsg: ChatMessage = { role: 'user', content: msgText };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
@@ -216,6 +220,7 @@ export function Chat({ isOpen, onClose }: ChatProps) {
   }
 
   function handleSuggestionClick(q: string) {
+    trackChat('suggestion_clicked', { question: q });
     handleSend(q);
   }
 

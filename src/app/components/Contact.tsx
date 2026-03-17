@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { CONTACT_LINKS } from '@/data/contact';
+import { trackForm, trackClick } from '@/lib/analytics';
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -30,6 +31,7 @@ export function Contact() {
 
     setStatus('submitting');
     setErrorMsg('');
+    trackForm('submitted', 'contact');
 
     try {
       const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
@@ -43,14 +45,17 @@ export function Contact() {
         setName('');
         setEmail('');
         setMessage('');
+        trackForm('success', 'contact');
       } else {
         const data = await res.json();
         setStatus('error');
         setErrorMsg(data?.errors?.[0]?.message || 'Failed to send message. Please try again.');
+        trackForm('error', 'contact', { error: data?.errors?.[0]?.message });
       }
     } catch {
       setStatus('error');
       setErrorMsg('Network error. Please check your connection.');
+      trackForm('error', 'contact', { error: 'network_error' });
     }
   }
 
@@ -77,6 +82,7 @@ export function Contact() {
                 className="contact-link"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackClick(`contact_${link.label.toLowerCase()}`)}
               >
                 <span className="contact-link-icon">{link.icon}</span>
                 <span className="contact-link-text">{link.displayText}</span>
